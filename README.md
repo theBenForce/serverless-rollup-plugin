@@ -1,6 +1,6 @@
 # Welcome to serverless-rollup-plugin 👋
 
-[![Build Status](https://travis-ci.org/drg-adaptive/serverless-rollup-plugin.svg?branch=master)](https://travis-ci.org/drg-adaptive/serverless-rollup-plugin)
+[![Build Status](https://travis-ci.org/drg-adaptive/serverless-rollup-plugin.svg)](https://travis-ci.org/drg-adaptive/serverless-rollup-plugin)
 [![Maintainability](https://api.codeclimate.com/v1/badges/79e200bf72d884691c7a/maintainability)](https://codeclimate.com/github/drg-adaptive/serverless-rollup-plugin/maintainability)
 [![npm version](https://badge.fury.io/js/serverless-rollup-plugin.svg)](https://badge.fury.io/js/serverless-rollup-plugin)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdrg-adaptive%2Fserverless-rollup-plugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdrg-adaptive%2Fserverless-rollup-plugin?ref=badge_shield)
