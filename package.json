@@ -1,0 +1,42 @@
+{
+  "name": "serverless-rollup-plugin",
+  "version": "1.0.0",
+  "description": "A plugin for the serverless framework to build lambda code using rollup",
+  "main": "dist/index.js",
+  "author": {
+    "name": "Ben Force",
+    "email": "bforce@teamdrg.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/archiver": "^3.0.0",
+    "@types/glob": "^7.1.1",
+    "@types/node": "^12.7.2",
+    "@types/rollup": "^0.54.0",
+    "@types/serverless": "^1.18.2",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "typescript": "^3.5.3"
+  },
+  "peerDependencies": {
+    "rollup": "^1.20.2",
+    "serverless": "^1.42.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "tsc",
+    "postversion": "git push --follow-tags"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "@types/bluebird": "^3.5.27",
+    "archiver": "^3.1.1",
+    "bluebird": "^3.5.5",
+    "glob": "^7.1.4",
+    "lodash": "^4.17.15"
+  }
+}
