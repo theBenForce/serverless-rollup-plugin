@@ -5,14 +5,15 @@ import glob from "glob";
 import * as path from "path";
 import rollup from "rollup";
 import archiver from "archiver";
-import fs, { stat } from "fs";
-import { existsSync, mkdirSync } from "fs";
+import fs from "fs";
+import execa from "execa";
 
 interface FunctionEntry {
   source: string;
   destination: string;
   handler: string;
   function: Serverless.FunctionDefinition;
+  dependencies?: string[];
 }
 
 export default class ServerlessRollupPlugin implements Plugin {
@@ -142,6 +143,35 @@ export default class ServerlessRollupPlugin implements Plugin {
       this.serverless.cli.log(`Bundling to ${input.destination}`);
       const bundle = await rollupLib.rollup(config);
       await bundle.write(config.output);
+
+      if (input.dependencies) {
+        this.serverless.cli.log(
+          `Installing ${input.dependencies.length} dependencies`
+        );
+
+        const pkg = require(path.join(process.cwd(), "package.json"));
+        const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
+        const missingDeps = input.dependencies.filter(
+          (dep: string) => !dependencies[dep]
+        );
+
+        if (missingDeps.length) {
+          this.serverless.cli.log(
+            `Please install the following dependencies in your project: ${missingDeps.join(
+              " "
+            )}`
+          );
+        }
+
+        const finalDependencies = input.dependencies
+          .map((dep: string) => `${dep}@${dependencies[dep]}`)
+          .join(" ");
+
+        await execa(`npm install ${finalDependencies}`, {
+          cwd: input.destination,
+          shell: true
+        });
+      }
 
       this.serverless.cli.log(`Creating zip file for ${input.function.name}`);
       const artifactPath = await this.zipDirectory(

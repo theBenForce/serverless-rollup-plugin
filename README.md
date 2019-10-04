@@ -14,7 +14,9 @@ yarn install serverless-rollup-plugin
 ```
 
 ## Usage
+
 Add the plugin to your serverless config:
+
 ```yaml
 plugins:
   - serverless-rollup-plugin
@@ -22,18 +24,30 @@ plugins:
 ```
 
 Under the custom property, add a section for rollup. The only required property to run rollup is the `config` property:
+
 ```yaml
 custom:
-    rollup:
-      config: ./rollup.config.js
+  rollup:
+    config: ./rollup.config.js
+```
+
+For each function that you would like to use rollup option, just define the handler option as normal. You can
+optionally define the `dependencies` property as a list of packages to be installed in the `node_modules` folder
+in your lambda.
+
+```yaml
+testFunction:
+  handler: src/functions/testFunction/index.handler
+  dependencies:
+    - aws-xray-sdk-core
 ```
 
 ## Author
 
 👤 **Ben Force**
 
-* Twitter: [@theBenForce](https://twitter.com/theBenForce)
-* Github: [@theBenForce](https://github.com/theBenForce)
+- Twitter: [@theBenForce](https://twitter.com/theBenForce)
+- Github: [@theBenForce](https://github.com/theBenForce)
 
 ## 🤝 Contributing
 
@@ -45,6 +59,6 @@ Feel free to check [issues page](https://github.com/drg-adaptive/serverless-roll
 
 Give a ⭐️ if this project helped you!
 
+---
 
-***
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
