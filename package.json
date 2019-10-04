@@ -1,6 +1,6 @@
 {
   "name": "serverless-rollup-plugin",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A plugin for the serverless framework to build lambda code using rollup",
   "main": "dist/index.js",
   "author": {
