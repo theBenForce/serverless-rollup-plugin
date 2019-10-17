@@ -20,6 +20,7 @@
     "@types/node": "^12.7.2",
     "@types/rollup": "^0.54.0",
     "@types/serverless": "^1.18.2",
+    "@types/tmp": "^0.1.0",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
     "semantic-release": "^15.13.24",
@@ -45,6 +46,7 @@
     "bluebird": "^3.5.5",
     "execa": "^2.0.5",
     "glob": "^7.1.4",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "tmp": "^0.1.0"
   }
 }

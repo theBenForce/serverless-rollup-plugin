@@ -7,6 +7,7 @@ import rollup from "rollup";
 import archiver from "archiver";
 import fs from "fs";
 import execa from "execa";
+import tmp from "tmp";
 
 interface FunctionEntry {
   source: string;
@@ -228,11 +229,7 @@ export default class ServerlessRollupPlugin implements Plugin {
     name: string,
     serverlessFunction: Serverless.FunctionDefinition
   ): { [key: string]: FunctionEntry } {
-    const baseDir = path.join(
-      this.serverless.config.servicePath,
-      ".serverless",
-      "rollup"
-    );
+    const baseDir = tmp.dirSync({ prefix: "serverless-rollup-plugin-" });
     const handler = serverlessFunction.handler;
 
     const handlerFile = this.getHandlerFile(handler);
@@ -252,7 +249,7 @@ export default class ServerlessRollupPlugin implements Plugin {
     return {
       [handlerFile]: {
         source: `./${handlerFile}${ext}`,
-        destination: path.join(baseDir, handlerFile),
+        destination: baseDir.name,
         handler: serverlessFunction.handler,
         function: serverlessFunction
       }
