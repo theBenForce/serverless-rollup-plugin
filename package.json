@@ -32,8 +32,7 @@
   "scripts": {
     "build": "tsc",
     "prepare": "tsc",
-    "test": "exit 0",
-    "postversion": "git push --follow-tags"
+    "test": "exit 0"
   },
   "config": {
     "commitizen": {
