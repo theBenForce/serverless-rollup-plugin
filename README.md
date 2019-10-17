@@ -42,6 +42,16 @@ testFunction:
     - aws-xray-sdk-core
 ```
 
+### Using Yarn
+
+By default if you specify function dependencies `npm` will be used. You can override this by setting the `installCommand` property, like this:
+
+```yaml
+custom:
+  rollup:
+    installCommand: yarn install
+```
+
 ## Author
 
 👤 **Ben Force**

@@ -17,16 +17,23 @@ interface FunctionEntry {
   };
 }
 
+interface CustomConfiguration {
+  config: string | rollup.RollupOptions;
+  excludeFiles?: Array<string>;
+  installCommand?: string;
+}
+
 export default class ServerlessRollupPlugin implements Plugin {
   readonly hooks: { [key: string]: any };
   readonly name: string;
-  configuration: any;
+  configuration: CustomConfiguration;
   rollupConfig: rollup.RollupOptions;
   entries: { [key: string]: FunctionEntry };
 
   constructor(private serverless: Serverless, private options: any) {
     this.name = "serverless-rollup";
-    this.configuration = this.serverless.service.custom.rollup;
+    this.configuration = this.serverless.service.custom
+      .rollup as CustomConfiguration;
 
     this.hooks = {
       "before:package:createDeploymentArtifacts": () =>
@@ -127,6 +134,8 @@ export default class ServerlessRollupPlugin implements Plugin {
   async rollup() {
     const rollupLib = require("rollup");
 
+    const installCommand = this.configuration.installCommand || "npm install";
+
     for (const handlerFile of Object.keys(this.entries)) {
       const input = this.entries[handlerFile];
       this.serverless.cli.log(`Creating config for ${input.source}`);
@@ -165,11 +174,11 @@ export default class ServerlessRollupPlugin implements Plugin {
           );
         }
 
-        const finalDependencies = functionDependencies
-          .map((dep: string) => `${dep}@${dependencies[dep]}`)
-          .join(" ");
+        const finalDependencies = functionDependencies.map(
+          (dep: string) => `${dep}@${dependencies[dep]}`
+        );
 
-        await execa(`npm install ${finalDependencies}`, {
+        await execa([installCommand, ...finalDependencies].join(" "), {
           cwd: input.destination,
           shell: true
         });
