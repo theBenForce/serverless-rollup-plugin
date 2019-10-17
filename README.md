@@ -49,7 +49,7 @@ By default if you specify function dependencies `npm` will be used. You can over
 ```yaml
 custom:
   rollup:
-    installCommand: yarn install
+    installCommand: yarn add
 ```
 
 ## Author

@@ -178,7 +178,14 @@ export default class ServerlessRollupPlugin implements Plugin {
           (dep: string) => `${dep}@${dependencies[dep]}`
         );
 
-        await execa([installCommand, ...finalDependencies].join(" "), {
+        const finalInstallCommand = [installCommand, ...finalDependencies].join(
+          " "
+        );
+        this.serverless.cli.log(
+          `Executing ${finalInstallCommand} in ${input.destination}`
+        );
+
+        await execa(finalInstallCommand, {
           cwd: input.destination,
           shell: true
         });
