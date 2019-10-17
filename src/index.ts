@@ -12,8 +12,9 @@ interface FunctionEntry {
   source: string;
   destination: string;
   handler: string;
-  function: Serverless.FunctionDefinition;
-  dependencies?: string[];
+  function: Serverless.FunctionDefinition & {
+    dependencies?: string[];
+  };
 }
 
 export default class ServerlessRollupPlugin implements Plugin {
@@ -144,14 +145,15 @@ export default class ServerlessRollupPlugin implements Plugin {
       const bundle = await rollupLib.rollup(config);
       await bundle.write(config.output);
 
-      if (input.dependencies) {
+      const functionDependencies = input.function.dependencies;
+      if (functionDependencies) {
         this.serverless.cli.log(
-          `Installing ${input.dependencies.length} dependencies`
+          `Installing ${functionDependencies.length} dependencies`
         );
 
         const pkg = require(path.join(process.cwd(), "package.json"));
         const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
-        const missingDeps = input.dependencies.filter(
+        const missingDeps = functionDependencies.filter(
           (dep: string) => !dependencies[dep]
         );
 
@@ -163,7 +165,7 @@ export default class ServerlessRollupPlugin implements Plugin {
           );
         }
 
-        const finalDependencies = input.dependencies
+        const finalDependencies = functionDependencies
           .map((dep: string) => `${dep}@${dependencies[dep]}`)
           .join(" ");
 
