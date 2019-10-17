@@ -3,19 +3,15 @@ node_js: "11"
 
 cache: yarn
 
-install: yarn install
-
 jobs:
   include:
-    - stage: npm latest release
-      if: tag IS present
-      node_js: stable
-      script: yarn build
+    # Define the release stage that runs semantic-release
+    - stage: release
+      if: branch = master
+      node_js: lts/*
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      # script: skip
       deploy:
-        provider: npm
-        email: "$NPM_EMAIL"
-        api_key: "$NPM_TOKEN"
+        provider: script
         skip_cleanup: true
-        tag: latest
-        on:
-          tags: true
+        script: yarn semantic-release
