@@ -7,6 +7,9 @@
     "name": "Ben Force",
     "email": "bforce@teamdrg.com"
   },
+  "homepage": "https://github.com/drg-adaptive/serverless-rollup-plugin",
+  "repository": "github:drg-adaptive/serverless-rollup-plugin",
+  "bugs": "https://github.com/drg-adaptive/serverless-rollup-plugin/issues",
   "license": "MIT",
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.4",
