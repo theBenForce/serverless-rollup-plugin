@@ -242,7 +242,7 @@ export default class ServerlessRollupPlugin implements Plugin {
         );
       return {};
     }
-    const ext = this.getEntryExtension(handlerFile);
+    const ext = this.getEntryExtension(handlerFile, name);
     serverlessFunction.handler = `index.${handlerEntry}`;
 
     // Create a valid entry key
@@ -256,7 +256,7 @@ export default class ServerlessRollupPlugin implements Plugin {
     };
   }
 
-  private getEntryExtension(fileName: string) {
+  private getEntryExtension(fileName: string, name: string) {
     const preferredExtensions = [".js", ".ts", ".jsx", ".tsx"];
 
     const files = glob.sync(`${fileName}.*`, {
@@ -270,7 +270,7 @@ export default class ServerlessRollupPlugin implements Plugin {
     if (_.isEmpty(files)) {
       // If we cannot find any handler we should terminate with an error
       throw new Error(
-        `No matching handler found for '${fileName}' in '${this.serverless.config.servicePath}'. Check your service definition.`
+        `No matching handler found for '${fileName}' in '${this.serverless.config.servicePath}'. Check your service definition (function ${name}).`
       );
     }
 
@@ -291,7 +291,7 @@ export default class ServerlessRollupPlugin implements Plugin {
       this.serverless.cli.log(
         `WARNING: More than one matching handlers found for '${fileName}'. Using '${_.first(
           sortedFiles
-        )}'.`
+        )}'. Function ${name}`
       );
     }
     return path.extname(_.first(sortedFiles));
