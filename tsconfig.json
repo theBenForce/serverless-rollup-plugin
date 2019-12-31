@@ -2,8 +2,12 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "ES2015",
     "target": "es2017",
-    "esModuleInterop": true
+    "lib": ["es6"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "resolveJsonModule": true
   }
 }
