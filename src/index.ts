@@ -1,25 +1,28 @@
-import * as Serverless from "serverless";
-import Plugin = require("serverless/classes/Plugin");
-import * as _ from "lodash";
-import glob from "glob";
+import Serverless, { FunctionDefinition } from "serverless";
+import Plugin from "serverless/classes/Plugin";
+import _ from "lodash";
+const glob = require("fast-glob");
 import * as path from "path";
-import rollup from "rollup";
 import archiver from "archiver";
 import fs from "fs";
+
+// @ts-ignore
 import execa from "execa";
 import tmp from "tmp";
+
+import { RollupOptions } from "../node_modules/rollup/dist/rollup";
 
 interface FunctionEntry {
   source: string;
   destination: string;
   handler: string;
-  function: Serverless.FunctionDefinition & {
+  function: FunctionDefinition & {
     dependencies?: string[];
   };
 }
 
 interface CustomConfiguration {
-  config: string | rollup.RollupOptions;
+  config: string | RollupOptions;
   excludeFiles?: Array<string>;
   installCommand?: string;
 }
@@ -28,7 +31,7 @@ export default class ServerlessRollupPlugin implements Plugin {
   readonly hooks: { [key: string]: any };
   readonly name: string;
   configuration: CustomConfiguration;
-  rollupConfig: rollup.RollupOptions;
+  rollupConfig?: RollupOptions;
   entries: { [key: string]: FunctionEntry };
 
   constructor(private serverless: Serverless, private options: any) {
@@ -141,15 +144,22 @@ export default class ServerlessRollupPlugin implements Plugin {
       const input = this.entries[handlerFile];
       this.serverless.cli.log(`Creating config for ${input.source}`);
 
+      let configOutput = {};
+
+      if (this.rollupConfig && this.rollupConfig.output) {
+        configOutput = this.rollupConfig.output;
+      }
+
       const config = {
         input: input.source,
         output: {
           file: path.join(input.destination, `index.js`),
           format: "cjs",
-          sourcemap: true
+          sourcemap: true,
+          ...configOutput
         },
         ...this.rollupConfig
-      } as rollup.RollupOptions;
+      } as RollupOptions;
 
       this.serverless.cli.log(`Bundling to ${input.destination}`);
       const bundle = await rollupLib.rollup(config);
@@ -227,7 +237,7 @@ export default class ServerlessRollupPlugin implements Plugin {
 
   private getEntryForFunction(
     name: string,
-    serverlessFunction: Serverless.FunctionDefinition
+    serverlessFunction: FunctionDefinition
   ): { [key: string]: FunctionEntry } {
     const baseDir = tmp.dirSync({ prefix: "serverless-rollup-plugin-" });
     const handler = serverlessFunction.handler;
@@ -263,8 +273,6 @@ export default class ServerlessRollupPlugin implements Plugin {
       cwd: this.serverless.config.servicePath,
       nodir: true,
       ignore: this.configuration.excludeFiles
-        ? this.configuration.excludeFiles
-        : undefined
     });
 
     if (_.isEmpty(files)) {

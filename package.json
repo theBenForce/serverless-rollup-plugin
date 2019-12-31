@@ -18,24 +18,35 @@
     "@semantic-release/npm": "^5.2.0",
     "@semantic-release/release-notes-generator": "^7.3.0",
     "@types/archiver": "^3.0.0",
-    "@types/execa": "^2.0.0",
     "@types/glob": "^7.1.1",
+    "@types/lodash": "^4.14.149",
     "@types/node": "^12.7.2",
-    "@types/rollup": "^0.54.0",
     "@types/serverless": "^1.18.2",
     "@types/tmp": "^0.1.0",
+    "builtin-modules": "^3.1.0",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
+    "execa": "^2.0.5",
+    "fast-glob": "^3.1.1",
+    "lodash": "^4.17.15",
+    "rollup": "^1.27.14",
+    "rollup-plugin-alias": "^2.2.0",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-plugin-typescript2": "^0.25.3",
     "semantic-release": "^15.13.24",
-    "typescript": "^3.5.3"
+    "tmp": "^0.1.0",
+    "typescript": "^3.7.4"
   },
   "peerDependencies": {
-    "rollup": "^1.20.2",
+    "rollup": "^1.27.14",
     "serverless": "^1.42.2"
   },
   "scripts": {
-    "build": "tsc",
-    "prepare": "tsc",
+    "build": "rollup -c",
+    "prepare": "yarn build",
     "test": "exit 0"
   },
   "config": {
@@ -44,12 +55,6 @@
     }
   },
   "dependencies": {
-    "@types/bluebird": "^3.5.27",
-    "archiver": "^3.1.1",
-    "bluebird": "^3.5.5",
-    "execa": "^2.0.5",
-    "glob": "^7.1.4",
-    "lodash": "^4.17.15",
-    "tmp": "^0.1.0"
+    "archiver": "^3.1.1"
   }
 }
