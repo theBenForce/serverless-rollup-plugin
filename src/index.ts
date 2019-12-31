@@ -5,6 +5,7 @@ const glob = require("fast-glob");
 import * as path from "path";
 import archiver from "archiver";
 import fs from "fs";
+import * as babel from "@babel/core";
 
 // @ts-ignore
 import execa from "execa";
@@ -59,10 +60,25 @@ export default class ServerlessRollupPlugin implements Plugin {
       return { ...entries, ...entry };
     }, {});
 
-    this.loadRollupConfig();
+    await this.loadRollupConfig();
   }
 
-  private loadRollupConfig() {
+  private async loadScript(filename: string): Promise<RollupOptions> {
+    const transformResult = await babel.transformFileAsync(filename, {
+      presets: [["@babel/preset-env", { targets: { node: true } }]],
+      cwd: process.cwd()
+    });
+
+    let script: RollupOptions;
+    if (transformResult && transformResult.code) {
+      script = eval(transformResult.code);
+    }
+
+    // @ts-ignore
+    return script;
+  }
+
+  private async loadRollupConfig() {
     if (typeof this.configuration.config === "string") {
       const rollupConfigFilePath = path.join(
         this.serverless.config.servicePath,
@@ -75,7 +91,8 @@ export default class ServerlessRollupPlugin implements Plugin {
         );
       }
       try {
-        this.rollupConfig = require(rollupConfigFilePath);
+        this.rollupConfig = await this.loadScript(rollupConfigFilePath);
+        this.serverless.cli.log(`Loaded: ${JSON.stringify(this.rollupConfig)}`);
       } catch (err) {
         this.serverless.cli.log(
           `Could not load rollup config '${rollupConfigFilePath}'`
@@ -143,77 +160,83 @@ export default class ServerlessRollupPlugin implements Plugin {
     for (const handlerFile of Object.keys(this.entries)) {
       const input = this.entries[handlerFile];
       this.serverless.cli.log(`Creating config for ${input.source}`);
-
-      let configOutput = {};
-
-      if (this.rollupConfig && this.rollupConfig.output) {
-        configOutput = this.rollupConfig.output;
-      }
-
-      const config = {
-        input: input.source,
-        output: {
-          file: path.join(input.destination, `index.js`),
+      try {
+        let configOutput: any = {
           format: "cjs",
-          sourcemap: true,
-          ...configOutput
-        },
-        ...this.rollupConfig
-      } as RollupOptions;
+          sourcemap: true
+        };
 
-      this.serverless.cli.log(`Bundling to ${input.destination}`);
-      const bundle = await rollupLib.rollup(config);
-      await bundle.write(config.output);
-
-      const functionDependencies = input.function.dependencies;
-      if (functionDependencies) {
-        this.serverless.cli.log(
-          `Installing ${functionDependencies.length} dependencies`
-        );
-
-        const pkg = require(path.join(process.cwd(), "package.json"));
-        const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
-        const missingDeps = functionDependencies.filter(
-          (dep: string) => !dependencies[dep]
-        );
-
-        if (missingDeps.length) {
-          this.serverless.cli.log(
-            `Please install the following dependencies in your project: ${missingDeps.join(
-              " "
-            )}`
-          );
+        if (this.rollupConfig && this.rollupConfig.output) {
+          configOutput = this.rollupConfig.output;
         }
 
-        const finalDependencies = functionDependencies.map(
-          (dep: string) => `${dep}@${dependencies[dep]}`
+        configOutput.file = path.join(input.destination, `index.js`);
+
+        const config = {
+          input: input.source,
+          output: configOutput,
+          ...this.rollupConfig
+        } as RollupOptions;
+
+        this.serverless.cli.log(`Bundling to ${input.destination}`);
+        const bundle = await rollupLib.rollup(config);
+        await bundle.write(config.output);
+
+        const functionDependencies = input.function.dependencies;
+        if (functionDependencies) {
+          this.serverless.cli.log(
+            `Installing ${functionDependencies.length} dependencies`
+          );
+
+          const pkg = require(path.join(process.cwd(), "package.json"));
+          const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
+          const missingDeps = functionDependencies.filter(
+            (dep: string) => !dependencies[dep]
+          );
+
+          if (missingDeps.length) {
+            this.serverless.cli.log(
+              `Please install the following dependencies in your project: ${missingDeps.join(
+                " "
+              )}`
+            );
+          }
+
+          const finalDependencies = functionDependencies.map(
+            (dep: string) => `${dep}@${dependencies[dep]}`
+          );
+
+          const finalInstallCommand = [
+            installCommand,
+            ...finalDependencies
+          ].join(" ");
+          this.serverless.cli.log(
+            `Executing ${finalInstallCommand} in ${input.destination}`
+          );
+
+          await execa(finalInstallCommand, {
+            cwd: input.destination,
+            shell: true
+          });
+        }
+
+        this.serverless.cli.log(`Creating zip file for ${input.function.name}`);
+        const artifactPath = await this.zipDirectory(
+          input.destination,
+          input.function.name
         );
 
-        const finalInstallCommand = [installCommand, ...finalDependencies].join(
-          " "
-        );
+        this.serverless.cli.log(`Path to artifact: ${artifactPath}`);
+
+        // @ts-ignore
+        input.function.package = {
+          artifact: artifactPath
+        };
+      } catch (ex) {
         this.serverless.cli.log(
-          `Executing ${finalInstallCommand} in ${input.destination}`
+          `Error while packaging ${input.source}: ${ex.message}`
         );
-
-        await execa(finalInstallCommand, {
-          cwd: input.destination,
-          shell: true
-        });
       }
-
-      this.serverless.cli.log(`Creating zip file for ${input.function.name}`);
-      const artifactPath = await this.zipDirectory(
-        input.destination,
-        input.function.name
-      );
-
-      this.serverless.cli.log(`Path to artifact: ${artifactPath}`);
-
-      // @ts-ignore
-      input.function.package = {
-        artifact: artifactPath
-      };
     }
   }
 
