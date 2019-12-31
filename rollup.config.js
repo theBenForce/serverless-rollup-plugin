@@ -4,9 +4,9 @@ import resolve from "rollup-plugin-node-resolve";
 import sourcemaps from "rollup-plugin-sourcemaps";
 import builtins from "builtin-modules";
 import cleanup from "rollup-plugin-cleanup";
-import alias from "rollup-plugin-alias";
 
 import pkg from "./package.json";
+import * as path from "path";
 
 export default {
   input: "src/index.ts",
@@ -17,16 +17,13 @@ export default {
     }
   ],
   plugins: [
-    alias({
-      entries: [{ find: "readable-stream", replacement: "stream" }]
-    }),
     typescript({
       useTsconfigDeclarationDir: true,
       typescript: require("typescript"),
       verbosity: 2
     }),
+    resolve({ preferBuiltins: true }),
     commonjs(),
-    resolve(),
     cleanup({
       extensions: ["js", "ts"]
     }),

@@ -52,6 +52,19 @@ custom:
     installCommand: yarn add
 ```
 
+### Output Options
+
+If you don't specify `output` settings in your rollup config, the following defaults will be used:
+
+```json
+{
+  "format": "cjs",
+  "sourcemap": true
+}
+```
+
+If you do specify `output` settings, they will be used and only the `file` property will be overwritten.
+
 ## Author
 
 👤 **Ben Force**
