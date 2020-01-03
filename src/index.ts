@@ -198,10 +198,18 @@ export default class ServerlessRollupPlugin implements Plugin {
         const bundle = await rollupLib.rollup(config);
         await bundle.write(config.output);
 
-        const functionDependencies = [
-          ...input.function.dependencies,
-          ...this.configuration.dependencies
-        ];
+        let functionDependencies = [
+          ...(input.function.dependencies || []),
+          ...(this.configuration.dependencies || [])
+        ].reduce((current: Array<string>, next: string) => {
+          if (!current.find(x => x === next)) {
+            current.push(next);
+          }
+
+          return current;
+        }, []);
+
+        functionDependencies;
 
         if (functionDependencies?.length) {
           this.serverless.cli.log(
