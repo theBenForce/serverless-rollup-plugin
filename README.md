@@ -52,6 +52,17 @@ custom:
     installCommand: yarn add
 ```
 
+### Add Global Dependency
+
+If you want to add a dependency for every lambda function (for example [adding source map support](#adding-sourcemap-support)), you can add them to the rollup `dependencies` property:
+
+```yaml
+custom:
+  rollup:
+    dependencies:
+      - some-package-name
+```
+
 ### Output Options
 
 If you don't specify `output` settings in your rollup config, the following defaults will be used:
@@ -60,6 +71,30 @@ If you don't specify `output` settings in your rollup config, the following defa
 {
   "format": "cjs",
   "sourcemap": true
+}
+```
+
+### Adding Sourcemap Support
+
+You can easily get your lambda stack traces to show correct file/line information using the `source-map-support` package.
+To use this with the `serverless-rollup-plugin`, first install the package and add it to the universal dependencies:
+
+```yaml
+custom:
+  rollup:
+    dependencies:
+      - source-map-support
+```
+
+Then in your rollup config, set the output banner to install it:
+
+```typescript
+export default {
+  output: {
+    format: "cjs",
+    sourcemap: true,
+    banner: "require('source-map-support').install();",
+  },
 }
 ```
 

@@ -6,7 +6,6 @@ import builtins from "builtin-modules";
 import cleanup from "rollup-plugin-cleanup";
 
 import pkg from "./package.json";
-import * as path from "path";
 
 export default {
   input: "src/index.ts",

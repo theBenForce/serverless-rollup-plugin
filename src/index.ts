@@ -23,9 +23,25 @@ interface FunctionEntry {
 }
 
 interface CustomConfiguration {
+  /**
+   * Rollup configuration, or a string pointing to the configuration
+   */
   config: string | RollupOptions;
+
+  /**
+   * Glob patterns to match files that should be excluded when bundling build results
+   */
   excludeFiles?: Array<string>;
+
+  /**
+   * The command used to install function dependencies, ex: yarn add
+   */
   installCommand?: string;
+
+  /**
+   * Optional list of dependencies to install to every lambda
+   */
+  dependencies?: string[];
 }
 
 export default class ServerlessRollupPlugin implements Plugin {
@@ -182,8 +198,12 @@ export default class ServerlessRollupPlugin implements Plugin {
         const bundle = await rollupLib.rollup(config);
         await bundle.write(config.output);
 
-        const functionDependencies = input.function.dependencies;
-        if (functionDependencies) {
+        const functionDependencies = [
+          ...input.function.dependencies,
+          ...this.configuration.dependencies
+        ];
+
+        if (functionDependencies?.length) {
           this.serverless.cli.log(
             `Installing ${functionDependencies.length} dependencies`
           );
