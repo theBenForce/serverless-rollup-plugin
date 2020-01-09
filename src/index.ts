@@ -196,9 +196,10 @@ export default class ServerlessRollupPlugin implements Plugin {
         configOutput.file = path.join(input.destination, `index.js`);
 
         const config = {
-          input: input.source,
           output: configOutput,
-          ...this.rollupConfig
+          ...this.rollupConfig,
+
+          input: input.source
         } as RollupOptions;
 
         this.serverless.cli.log(`Bundling to ${input.destination}`);
