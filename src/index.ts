@@ -108,7 +108,14 @@ export default class ServerlessRollupPlugin implements Plugin {
       }
       try {
         this.rollupConfig = await this.loadScript(rollupConfigFilePath);
-        this.serverless.cli.log(`Loaded: ${JSON.stringify(this.rollupConfig)}`);
+
+        if (this.rollupConfig.input) {
+          delete this.rollupConfig.input;
+        }
+
+        this.serverless.cli.log(
+          `Loaded rollup config from ${rollupConfigFilePath}`
+        );
       } catch (err) {
         this.serverless.cli.log(
           `Could not load rollup config '${rollupConfigFilePath}'`
