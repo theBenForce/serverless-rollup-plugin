@@ -1,368 +1,136 @@
-import Serverless, { FunctionDefinition } from "serverless";
+import Serverless from "serverless";
 import Plugin from "serverless/classes/Plugin";
-import _ from "lodash";
-const glob = require("fast-glob");
-import * as path from "path";
-import archiver from "archiver";
-import fs from "fs";
-import * as babel from "@babel/core";
 
-// @ts-ignore
-import execa from "execa";
-import tmp from "tmp";
-
-import { RollupOptions } from "../node_modules/rollup/dist/rollup";
-
-interface FunctionEntry {
-  source: string;
-  destination: string;
-  handler: string;
-  function: FunctionDefinition & {
-    dependencies?: string[];
-  };
-}
-
-interface CustomConfiguration {
-  /**
-   * Rollup configuration, or a string pointing to the configuration
-   */
-  config: string | RollupOptions;
-
-  /**
-   * Glob patterns to match files that should be excluded when bundling build results
-   */
-  excludeFiles?: Array<string>;
-
-  /**
-   * The command used to install function dependencies, ex: yarn add
-   */
-  installCommand?: string;
-
-  /**
-   * Optional list of dependencies to install to every lambda
-   */
-  dependencies?: string[];
-}
+import { RollupOptions, OutputChunk, OutputAsset } from "rollup";
+import loadRollupConfig from "./utils/loadRollupConfig";
+import zipDirectory from "./utils/zipDirectory";
+import getEntryForFunction, {
+  FunctionEntry
+} from "./utils/getEntryForFunction";
+import { CustomConfiguration } from "./customConfiguration";
+import rollupFunctionEntry from "./utils/rollupFunctionEntry";
+import installDependencies from "./utils/installDependencies";
+import path from "path";
 
 export default class ServerlessRollupPlugin implements Plugin {
   readonly hooks: { [key: string]: any };
   readonly name: string;
   configuration: CustomConfiguration;
-  rollupConfig?: RollupOptions;
-  entries: { [key: string]: FunctionEntry };
+  rollupConfig: RollupOptions;
+  entries: Map<string, FunctionEntry>;
 
-  constructor(private serverless: Serverless, private options: any) {
+  constructor(
+    private serverless: Serverless,
+    private options: Serverless.Options
+  ) {
     this.name = "serverless-rollup";
     this.configuration = this.serverless.service.custom
       .rollup as CustomConfiguration;
 
     this.hooks = {
       "before:package:createDeploymentArtifacts": () =>
-        this.prepare().then(this.rollup.bind(this)),
+        this.prepare().then(this.rollupFunction.bind(this)),
       "after:package:createDeploymentArtifacts": () => this.cleanup(),
       "before:deploy:function:packageFunction": () =>
-        this.prepare().then(this.rollup.bind(this))
+        this.prepare().then(this.rollupFunction.bind(this))
     };
   }
 
   async prepare() {
-    const functions = this.serverless.service.getAllFunctions();
+    const functions = this.options.function
+      ? [this.options.function]
+      : this.serverless.service.getAllFunctions();
 
-    this.entries = functions.reduce((entries, func) => {
-      const entry = this.getEntryForFunction(
-        func,
-        this.serverless.service.getFunction(func)
-      );
-      return { ...entries, ...entry };
-    }, {});
-
-    await this.loadRollupConfig();
-  }
-
-  private async loadScript(filename: string): Promise<RollupOptions> {
-    const transformResult = await babel.transformFileAsync(filename, {
-      presets: [["@babel/preset-env", { targets: { node: true } }]],
-      cwd: process.cwd()
-    });
-
-    let script: RollupOptions;
-    if (transformResult && transformResult.code) {
-      script = eval(transformResult.code);
-    }
-
-    // @ts-ignore
-    return script;
-  }
-
-  private async loadRollupConfig() {
-    if (typeof this.configuration.config === "string") {
-      const rollupConfigFilePath = path.join(
-        this.serverless.config.servicePath,
-        this.configuration.config
-      );
-      if (!this.serverless.utils.fileExistsSync(rollupConfigFilePath)) {
-        throw new Error(
-          "The rollup plugin could not find the configuration file at: " +
-            rollupConfigFilePath
-        );
-      }
-      try {
-        this.rollupConfig = await this.loadScript(rollupConfigFilePath);
-
-        if (this.rollupConfig.input) {
-          delete this.rollupConfig.input;
+    this.entries = functions
+      .map((functionName: string) =>
+        getEntryForFunction(
+          this.serverless,
+          this.configuration.excludeFiles,
+          functionName,
+          // @ts-ignore
+          this.serverless.service.getFunction(functionName)
+        )
+      )
+      .reduce((entries: Map<string, FunctionEntry>, entry: FunctionEntry) => {
+        if (!entries.has(entry.handlerFile)) {
+          entries.set(entry.handlerFile, entry);
         }
 
-        this.serverless.cli.log(
-          `Loaded rollup config from ${rollupConfigFilePath}`
-        );
-      } catch (err) {
-        this.serverless.cli.log(
-          `Could not load rollup config '${rollupConfigFilePath}'`
-        );
-        throw err;
-      }
-    } else {
-      this.rollupConfig = this.configuration.config;
-    }
-  }
+        return entries;
+      }, new Map<string, FunctionEntry>());
 
-  async zipDirectory(source: string, name: string): Promise<string> {
-    const zip = archiver.create("zip");
-
-    const artifactPath = path.join(
-      this.serverless.config.servicePath,
-      ".serverless",
-      `${name}.zip`
+    this.rollupConfig = await loadRollupConfig(
+      this.serverless,
+      this.configuration.config
     );
-    this.serverless.utils.writeFileDir(artifactPath);
-
-    const output = fs.createWriteStream(artifactPath);
-
-    const files = glob.sync("**", {
-      cwd: source,
-      dot: true,
-      silent: true,
-      follow: true
-    });
-
-    if (files.length === 0) {
-      throw new Error(`Packing ${name}: No files found`);
-    }
-
-    output.on("open", () => {
-      zip.pipe(output);
-
-      files.forEach((filePath: string) => {
-        const fullPath = path.resolve(source, filePath);
-        const stats = fs.statSync(fullPath);
-
-        if (!stats.isDirectory()) {
-          zip.append(fs.readFileSync(fullPath), {
-            name: filePath,
-            mode: stats.mode,
-            date: new Date(0) // Trick to get the same hash when zipping
-          });
-        }
-      });
-
-      zip.finalize();
-    });
-
-    return new Promise((resolve, reject) => {
-      zip.on("error", reject);
-      output.on("close", () => resolve(artifactPath));
-    });
   }
 
-  async rollup() {
-    const rollupLib = require("rollup");
-
+  async rollupFunction() {
     const installCommand = this.configuration.installCommand || "npm install";
 
-    for (const handlerFile of Object.keys(this.entries)) {
-      const input = this.entries[handlerFile];
-      this.serverless.cli.log(`Creating config for ${input.source}`);
+    for (const functionEntry of this.entries.values()) {
+      this.serverless.cli.log(`.: Function ${functionEntry.function.name} :.`);
+
+      this.serverless.cli.log(`Creating config for ${functionEntry.source}`);
       try {
-        let configOutput: any = {
-          format: "cjs",
-          sourcemap: true
-        };
+        this.serverless.cli.log(`Bundling to ${functionEntry.destination}`);
 
-        if (this.rollupConfig && this.rollupConfig.output) {
-          configOutput = this.rollupConfig.output;
-        }
+        const rollupOutput = await rollupFunctionEntry(
+          functionEntry,
+          this.rollupConfig
+        );
 
-        configOutput.file = path.join(input.destination, `index.js`);
+        const excludedLibraries = rollupOutput.output.reduce(
+          (current: Array<string>, output: OutputChunk | OutputAsset) => {
+            if (output.type === "chunk" && output.imports) {
+              current.push(...output.imports);
+            }
 
-        const config = {
-          output: configOutput,
-          ...this.rollupConfig,
+            return current;
+          },
+          []
+        );
 
-          input: input.source
-        } as RollupOptions;
+        this.serverless.cli.log(
+          `Excluded the following imports: ${excludedLibraries.join(", ")}`
+        );
 
-        this.serverless.cli.log(`Bundling to ${input.destination}`);
-        const bundle = await rollupLib.rollup(config);
-        await bundle.write(config.output);
+        await installDependencies(
+          this.serverless,
+          functionEntry,
+          this.configuration.dependencies || [],
+          installCommand
+        );
 
-        let functionDependencies = [
-          ...(input.function.dependencies || []),
-          ...(this.configuration.dependencies || [])
-        ].reduce((current: Array<string>, next: string) => {
-          if (!current.find(x => x === next)) {
-            current.push(next);
-          }
-
-          return current;
-        }, []);
-
-        functionDependencies;
-
-        if (functionDependencies?.length) {
-          this.serverless.cli.log(
-            `Installing ${functionDependencies.length} dependencies`
-          );
-
-          const pkg = require(path.join(process.cwd(), "package.json"));
-          const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
-          const missingDeps = functionDependencies.filter(
-            (dep: string) => !dependencies[dep]
-          );
-
-          if (missingDeps.length) {
-            this.serverless.cli.log(
-              `Please install the following dependencies in your project: ${missingDeps.join(
-                " "
-              )}`
-            );
-          }
-
-          const finalDependencies = functionDependencies.map(
-            (dep: string) => `${dep}@${dependencies[dep]}`
-          );
-
-          const finalInstallCommand = [
-            installCommand,
-            ...finalDependencies
-          ].join(" ");
-          this.serverless.cli.log(
-            `Executing ${finalInstallCommand} in ${input.destination}`
-          );
-
-          await execa(finalInstallCommand, {
-            cwd: input.destination,
-            shell: true
-          });
-        }
-
-        this.serverless.cli.log(`Creating zip file for ${input.function.name}`);
-        const artifactPath = await this.zipDirectory(
-          input.destination,
-          input.function.name
+        this.serverless.cli.log(
+          `Creating zip file for ${functionEntry.function.name}`
+        );
+        const artifactPath = await zipDirectory(
+          this.serverless,
+          functionEntry.destination,
+          functionEntry.function.name
         );
 
         this.serverless.cli.log(`Path to artifact: ${artifactPath}`);
 
         // @ts-ignore
-        input.function.package = {
-          artifact: artifactPath
+        functionEntry.function.package = {
+          artifact: path.relative(
+            this.serverless.config.servicePath,
+            artifactPath
+          )
         };
       } catch (ex) {
         this.serverless.cli.log(
-          `Error while packaging ${input.source}: ${ex.message}`
+          `Error while packaging ${functionEntry.source}: ${ex.message}`
         );
+
+        throw ex;
       }
     }
   }
 
   async cleanup() {}
-
-  private getHandlerFile(handler: string) {
-    // Check if handler is a well-formed path based handler.
-    const handlerEntry = /(.*)\..*?$/.exec(handler);
-    if (handlerEntry) {
-      return handlerEntry[1];
-    }
-  }
-
-  private getHandlerEntry(handler: string) {
-    // Check if handler is a well-formed path based handler.
-    const handlerEntry = /.*\.(.*)?$/.exec(handler);
-    if (handlerEntry) {
-      return handlerEntry[1];
-    }
-  }
-
-  private getEntryForFunction(
-    name: string,
-    serverlessFunction: FunctionDefinition
-  ): { [key: string]: FunctionEntry } {
-    const baseDir = tmp.dirSync({ prefix: "serverless-rollup-plugin-" });
-    const handler = serverlessFunction.handler;
-
-    const handlerFile = this.getHandlerFile(handler);
-    const handlerEntry = this.getHandlerEntry(handler);
-
-    if (!handlerFile) {
-      _.get(this.serverless, "service.provider.name") !== "google" &&
-        this.serverless.cli.log(
-          `\nWARNING: Entry for ${name}@${handler} could not be retrieved.\nPlease check your service config if you want to use lib.entries.`
-        );
-      return {};
-    }
-    const ext = this.getEntryExtension(handlerFile, name);
-    serverlessFunction.handler = `index.${handlerEntry}`;
-
-    // Create a valid entry key
-    return {
-      [handlerFile]: {
-        source: `./${handlerFile}${ext}`,
-        destination: baseDir.name,
-        handler: serverlessFunction.handler,
-        function: serverlessFunction
-      }
-    };
-  }
-
-  private getEntryExtension(fileName: string, name: string) {
-    const preferredExtensions = [".js", ".ts", ".jsx", ".tsx"];
-
-    const files = glob.sync(`${fileName}.*`, {
-      cwd: this.serverless.config.servicePath,
-      nodir: true,
-      ignore: this.configuration.excludeFiles
-    });
-
-    if (_.isEmpty(files)) {
-      // If we cannot find any handler we should terminate with an error
-      throw new Error(
-        `No matching handler found for '${fileName}' in '${this.serverless.config.servicePath}'. Check your service definition (function ${name}).`
-      );
-    }
-
-    // Move preferred file extensions to the beginning
-    const sortedFiles = _.uniq(
-      _.concat(
-        _.sortBy(
-          _.filter(files, file =>
-            _.includes(preferredExtensions, path.extname(file))
-          ),
-          a => _.size(a)
-        ),
-        files
-      )
-    );
-
-    if (_.size(sortedFiles) > 1) {
-      this.serverless.cli.log(
-        `WARNING: More than one matching handlers found for '${fileName}'. Using '${_.first(
-          sortedFiles
-        )}'. Function ${name}`
-      );
-    }
-    return path.extname(_.first(sortedFiles));
-  }
 }
 
 module.exports = ServerlessRollupPlugin;

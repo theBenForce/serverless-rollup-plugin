@@ -29,6 +29,7 @@ export default {
     sourcemaps()
   ],
   external: [
+    "rollup",
     ...builtins,
     ...Object.keys(pkg.peerDependencies),
     ...Object.keys(pkg.dependencies)
