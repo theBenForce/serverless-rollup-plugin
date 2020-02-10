@@ -10,6 +10,7 @@ export interface FunctionEntry {
   handlerFile: string;
   function: FunctionDefinition & {
     dependencies: string[];
+    copyFiles?: string[];
   };
 }
 

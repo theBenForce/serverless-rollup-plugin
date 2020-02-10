@@ -40,6 +40,8 @@ testFunction:
   handler: src/functions/testFunction/index.handler
   dependencies:
     - aws-xray-sdk-core
+  copyFiles:
+    - some/glob/**/*.pattern
 ```
 
 ### Using Yarn
@@ -93,12 +95,17 @@ export default {
   output: {
     format: "cjs",
     sourcemap: true,
-    banner: "require('source-map-support').install();",
-  },
-}
+    banner: "require('source-map-support').install();"
+  }
+};
 ```
 
 If you do specify `output` settings, they will be used and only the `file` property will be overwritten.
+
+### Copying Resource Files
+
+To copy a static file into your function deployment, use the `copyFiles` parameter. This
+parameter is an array of glob patterns.
 
 ## Author
 

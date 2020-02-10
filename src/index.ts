@@ -11,6 +11,7 @@ import { CustomConfiguration } from "./customConfiguration";
 import rollupFunctionEntry from "./utils/rollupFunctionEntry";
 import installDependencies from "./utils/installDependencies";
 import path from "path";
+import copyFiles from "./utils/copyFiles";
 
 export default class ServerlessRollupPlugin implements Plugin {
   readonly hooks: { [key: string]: any };
@@ -101,6 +102,10 @@ export default class ServerlessRollupPlugin implements Plugin {
           this.configuration.dependencies || [],
           installCommand
         );
+
+        if (functionEntry.function.copyFiles) {
+          await copyFiles(this.serverless, functionEntry);
+        }
 
         this.serverless.cli.log(
           `Creating zip file for ${functionEntry.function.name}`
