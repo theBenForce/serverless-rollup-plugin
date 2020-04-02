@@ -64,7 +64,6 @@ function getEntryExtension(
 export default (
   serverless: Serverless,
   ignore: Array<string>,
-  name: string,
   serverlessFunction: FunctionDefinition & {
     dependencies: string[];
   }
@@ -77,10 +76,15 @@ export default (
 
   if (!handlerFile) {
     throw new Error(
-      `\nWARNING: Entry for ${name}@${handler} could not be retrieved.\nPlease check your service config if you want to use lib.entries.`
+      `\nWARNING: Entry for ${serverlessFunction.name}@${handler} could not be retrieved.\nPlease check your service config if you want to use lib.entries.`
     );
   }
-  const ext = getEntryExtension(serverless, ignore, handlerFile, name);
+  const ext = getEntryExtension(
+    serverless,
+    ignore,
+    handlerFile,
+    serverlessFunction.name
+  );
   serverlessFunction.handler = `index.${handlerEntry}`;
 
   if (!serverlessFunction.dependencies) {
