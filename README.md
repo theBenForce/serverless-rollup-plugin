@@ -105,7 +105,13 @@ If you do specify `output` settings, they will be used and only the `file` prope
 ### Copying Resource Files
 
 To copy a static file into your function deployment, use the `copyFiles` parameter. This
-parameter is an array of glob patterns.
+parameter is an array of glob pattern strings, or objects with the following properties:
+
+| Name        | Required | Description                                                     |
+| ----------- | -------- | --------------------------------------------------------------- |
+| glob        | Yes      | A glob pattern                                                  |
+| srcBase     | No       | Part of the path that will be removed from the destination path |
+| destination | No       | Destination path within the lambda's directory structure        |
 
 ## Author
 

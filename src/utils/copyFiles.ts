@@ -5,17 +5,48 @@ import * as path from "path";
 import * as fs from "fs";
 import makeDir from "make-dir";
 
+interface CopyFilesAdvanced {
+  glob: string;
+  srcBase?: string;
+  destination?: string;
+}
+
+export type CopyFilesEntry = string | CopyFilesAdvanced;
+
+function getCopyFiles(functionEntry: FunctionEntry): Array<CopyFilesAdvanced> {
+  return functionEntry.function.copyFiles?.map(entry => {
+    if (typeof entry === "string") {
+      return { glob: entry };
+    }
+    return entry;
+  });
+}
+
 export default async (serverless: Serverless, functionEntry: FunctionEntry) => {
-  const copyFiles = functionEntry.function.copyFiles;
+  const copyFiles = getCopyFiles(functionEntry);
 
-  const files = await globby(copyFiles);
-  serverless.cli.log(`Copying: ${JSON.stringify(files)}`);
+  for (const entry of copyFiles) {
+    let files = await globby([entry.glob]);
 
-  await Promise.all(
-    files.map(async filename => {
-      const destination = path.join(functionEntry.destination, filename);
-      await makeDir(path.dirname(destination));
-      fs.copyFileSync(filename, destination);
-    })
-  );
+    serverless.cli.log(`Copying: ${JSON.stringify(files)}`);
+
+    if (entry.srcBase) {
+      files = files.map(filename => filename.replace(entry.srcBase, ""));
+    }
+
+    await Promise.all(
+      files.map(async filename => {
+        let destination = filename;
+        if (entry.srcBase) {
+          destination = filename.replace(entry.srcBase, "");
+        }
+        if (entry.destination) {
+          destination = path.join(entry.destination, destination);
+        }
+        destination = path.join(functionEntry.destination, destination);
+        await makeDir(path.dirname(destination));
+        fs.copyFileSync(filename, destination);
+      })
+    );
+  }
 };

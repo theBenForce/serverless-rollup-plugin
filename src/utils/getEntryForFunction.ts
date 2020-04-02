@@ -1,6 +1,7 @@
 import path from "path";
 import tmp from "tmp";
 import Serverless, { FunctionDefinition } from "serverless";
+import { CopyFilesEntry } from "./copyFiles";
 const glob = require("fast-glob");
 
 export interface FunctionEntry {
@@ -10,7 +11,7 @@ export interface FunctionEntry {
   handlerFile: string;
   function: FunctionDefinition & {
     dependencies: string[];
-    copyFiles?: string[];
+    copyFiles?: CopyFilesEntry[];
   };
 }
 
