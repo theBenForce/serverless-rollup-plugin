@@ -29,10 +29,6 @@ export default async (serverless: Serverless, functionEntry: FunctionEntry) => {
 
     serverless.cli.log(`Copying: ${JSON.stringify(files)}`);
 
-    if (entry.srcBase) {
-      files = files.map(filename => filename.replace(entry.srcBase, ""));
-    }
-
     await Promise.all(
       files.map(async filename => {
         let destination = filename;
@@ -45,8 +41,9 @@ export default async (serverless: Serverless, functionEntry: FunctionEntry) => {
         destination = path.join(functionEntry.destination, destination);
         const destDir = path.dirname(destination);
 
-        serverless.cli.log(`Creating directory ${destDir}...`);
         fs.mkdirSync(destDir, { recursive: true });
+
+        serverless.cli.log(`Copying ${filename} to ${destination}...`);
         fs.copyFileSync(filename, destination);
       })
     );
