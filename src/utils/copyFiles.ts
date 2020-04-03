@@ -3,7 +3,6 @@ import { FunctionEntry } from "./getEntryForFunction";
 import globby from "globby";
 import * as path from "path";
 import * as fs from "fs";
-import makeDir from "make-dir";
 
 interface CopyFilesAdvanced {
   glob: string;
@@ -44,7 +43,10 @@ export default async (serverless: Serverless, functionEntry: FunctionEntry) => {
           destination = path.join(entry.destination, destination);
         }
         destination = path.join(functionEntry.destination, destination);
-        await makeDir(path.dirname(destination));
+        const destDir = path.dirname(destination);
+
+        serverless.cli.log(`Creating directory ${destDir}...`);
+        fs.mkdirSync(destDir, { recursive: true });
         fs.copyFileSync(filename, destination);
       })
     );
