@@ -18,7 +18,7 @@ export default class ServerlessRollupPlugin implements Plugin {
   readonly name: string;
   configuration: CustomConfiguration;
   rollupConfig: RollupOptions;
-  entries: Map<string, FunctionEntry>;
+  entries: Map<string, FunctionEntry[]>;
 
   constructor(
     private serverless: Serverless,
@@ -60,13 +60,11 @@ export default class ServerlessRollupPlugin implements Plugin {
           functionDefinition
         )
       )
-      .reduce((entries: Map<string, FunctionEntry>, entry: FunctionEntry) => {
-        if (!entries.has(entry.handlerFile)) {
-          entries.set(entry.handlerFile, entry);
-        }
+      .reduce((entries: Map<string, FunctionEntry[]>, entry: FunctionEntry) => {
+        entries.set(entry.handlerFile, (entries.get(entry.handlerFile) || []).concat(entry));
 
         return entries;
-      }, new Map<string, FunctionEntry>());
+      }, new Map<string, FunctionEntry[]>());
 
     this.rollupConfig = await loadRollupConfig(
       this.serverless,
@@ -77,68 +75,70 @@ export default class ServerlessRollupPlugin implements Plugin {
   async rollupFunction() {
     const installCommand = this.configuration.installCommand || "npm install";
 
-    for (const functionEntry of this.entries.values()) {
-      this.serverless.cli.log(`.: Function ${functionEntry.function.name} :.`);
+    for (const functionEntries of this.entries.values()) {
+      for (const functionEntry of functionEntries) {
+        this.serverless.cli.log(`.: Function ${functionEntry.function.name} :.`);
 
-      this.serverless.cli.log(`Creating config for ${functionEntry.source}`);
-      try {
-        this.serverless.cli.log(`Bundling to ${functionEntry.destination}`);
+        this.serverless.cli.log(`Creating config for ${functionEntry.source}`);
+        try {
+          this.serverless.cli.log(`Bundling to ${functionEntry.destination}`);
 
-        const rollupOutput = await rollupFunctionEntry(
-          functionEntry,
-          this.rollupConfig
-        );
+          const rollupOutput = await rollupFunctionEntry(
+            functionEntry,
+            this.rollupConfig
+          );
 
-        const excludedLibraries = rollupOutput.output.reduce(
-          (current: Array<string>, output: OutputChunk | OutputAsset) => {
-            if (output.type === "chunk" && output.imports) {
-              current.push(...output.imports);
-            }
+          const excludedLibraries = rollupOutput.output.reduce(
+            (current: Array<string>, output: OutputChunk | OutputAsset) => {
+              if (output.type === "chunk" && output.imports) {
+                current.push(...output.imports);
+              }
 
-            return current;
-          },
-          []
-        );
+              return current;
+            },
+            []
+          );
 
-        this.serverless.cli.log(
-          `Excluded the following imports: ${excludedLibraries.join(", ")}`
-        );
+          this.serverless.cli.log(
+            `Excluded the following imports: ${excludedLibraries.join(", ")}`
+          );
 
-        await installDependencies(
-          this.serverless,
-          functionEntry,
-          this.configuration.dependencies || [],
-          installCommand
-        );
+          await installDependencies(
+            this.serverless,
+            functionEntry,
+            this.configuration.dependencies || [],
+            installCommand
+          );
 
-        if (functionEntry.function.copyFiles) {
-          await copyFiles(this.serverless, functionEntry);
+          if (functionEntry.function.copyFiles) {
+            await copyFiles(this.serverless, functionEntry);
+          }
+
+          this.serverless.cli.log(
+            `Creating zip file for ${functionEntry.function.name}`
+          );
+          const artifactPath = await zipDirectory(
+            this.serverless,
+            functionEntry.destination,
+            functionEntry.function.name
+          );
+
+          this.serverless.cli.log(`Path to artifact: ${artifactPath}`);
+
+          // @ts-ignore
+          functionEntry.function.package = {
+            artifact: path.relative(
+              this.serverless.config.servicePath,
+              artifactPath
+            )
+          };
+        } catch (ex) {
+          this.serverless.cli.log(
+            `Error while packaging ${functionEntry.source}: ${ex.message}`
+          );
+
+          throw ex;
         }
-
-        this.serverless.cli.log(
-          `Creating zip file for ${functionEntry.function.name}`
-        );
-        const artifactPath = await zipDirectory(
-          this.serverless,
-          functionEntry.destination,
-          functionEntry.function.name
-        );
-
-        this.serverless.cli.log(`Path to artifact: ${artifactPath}`);
-
-        // @ts-ignore
-        functionEntry.function.package = {
-          artifact: path.relative(
-            this.serverless.config.servicePath,
-            artifactPath
-          )
-        };
-      } catch (ex) {
-        this.serverless.cli.log(
-          `Error while packaging ${functionEntry.source}: ${ex.message}`
-        );
-
-        throw ex;
       }
     }
   }
