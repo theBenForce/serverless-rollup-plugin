@@ -43,7 +43,7 @@ export default class ServerlessRollupPlugin implements Plugin {
       : this.serverless.service.getAllFunctions();
 
     this.entries = functions
-      .map(functionName => this.serverless.service.getFunction(functionName))
+      .map((functionName: string) => this.serverless.service.getFunction(functionName))
       .filter((functionDefinition: Serverless.FunctionDefinition) =>
         (
           functionDefinition.runtime ||
