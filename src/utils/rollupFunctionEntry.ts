@@ -4,12 +4,12 @@ import rollup, {
   RollupOptions,
   RollupBuild,
   OutputOptions,
-  InputOptions,
+  InputOption,
   RollupOutput,
   RollupCache
 } from "rollup";
 
-const bundlesMemo = new Map<InputOptions, RollupBuild>();
+const bundlesMemo = new Map<InputOption, RollupBuild>();
 let cache: RollupCache;
 export default async (
   functionEntry: FunctionEntry,
