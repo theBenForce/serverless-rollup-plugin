@@ -4,9 +4,9 @@ import rollup, {
   RollupOptions,
   RollupBuild,
   OutputOptions,
-  InputOption,
   RollupOutput,
-  RollupCache
+  RollupCache,
+  InputOption,
 } from "rollup";
 
 const bundlesMemo = new Map<InputOption, RollupBuild>();
@@ -21,12 +21,14 @@ export default async (
     cache
   );
 
-  const bundle = bundlesMemo.get(config.input) || await (async () => {
-    const bundle: RollupBuild = await rollup.rollup(config);
-    cache = bundle.cache;
-    bundlesMemo.set(config.input, bundle);
-    return bundle;
-  })();
+  const bundle =
+    bundlesMemo.get(config.input) ||
+    (await (async () => {
+      const bundle: RollupBuild = await rollup.rollup(config);
+      cache = bundle.cache;
+      bundlesMemo.set(config.input, bundle);
+      return bundle;
+    })());
 
   const rollupOutput: RollupOutput = await bundle.write(
     config.output as OutputOptions
