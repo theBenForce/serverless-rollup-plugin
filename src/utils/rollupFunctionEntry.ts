@@ -4,7 +4,6 @@ import rollup, {
   RollupOptions,
   RollupBuild,
   OutputOptions,
-  InputOptions,
   RollupOutput,
   RollupCache,
   InputOption,
