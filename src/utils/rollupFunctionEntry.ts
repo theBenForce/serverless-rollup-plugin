@@ -1,4 +1,4 @@
-import buildRollupConfig from "./buildRollupConfig";
+import { buildInputConfig, buildOutputConfig } from "./buildRollupConfig";
 import { FunctionEntry } from "./getEntryForFunction";
 import rollup, {
   RollupOptions,
@@ -6,29 +6,35 @@ import rollup, {
   OutputOptions,
   RollupOutput,
   RollupCache,
-  InputOption,
 } from "rollup";
 
-const bundlesMemo = new Map<InputOption, RollupBuild>();
 let cache: RollupCache;
-export default async (
-  functionEntry: FunctionEntry,
-  rollupConfig: RollupOptions
+export const buildBundle = async (
+  input: string,
+  rollupConfig: RollupOptions,
 ) => {
-  const config: RollupOptions = buildRollupConfig(
-    functionEntry,
+  const config: RollupOptions = buildInputConfig(
+    input,
     rollupConfig,
     cache
   );
 
-  const bundle =
-    bundlesMemo.get(config.input) ||
-    (await (async () => {
-      const bundle: RollupBuild = await rollup.rollup(config);
-      cache = bundle.cache;
-      bundlesMemo.set(config.input, bundle);
-      return bundle;
-    })());
+  const bundle: RollupBuild = await rollup.rollup(config);
+  cache = bundle.cache;
+
+  return bundle;
+};
+
+export const outputBundle = async (
+  bundle: RollupBuild,
+  functionEntry: FunctionEntry,
+  rollupConfig: RollupOptions,
+) => {
+  const config: RollupOptions = buildOutputConfig(
+    functionEntry,
+    rollupConfig,
+    cache
+  );
 
   const rollupOutput: RollupOutput = await bundle.write(
     config.output as OutputOptions
