@@ -8,7 +8,7 @@ import getEntryForFunction, {
   FunctionEntry
 } from "./utils/getEntryForFunction";
 import { CustomConfiguration } from "./customConfiguration";
-import rollupFunctionEntry from "./utils/rollupFunctionEntry";
+import { buildBundle, outputBundle } from "./utils/rollupFunctionEntry";
 import installDependencies from "./utils/installDependencies";
 import path from "path";
 import copyFiles from "./utils/copyFiles";
@@ -61,7 +61,7 @@ export default class ServerlessRollupPlugin implements Plugin {
         )
       )
       .reduce((entries: Map<string, FunctionEntry[]>, entry: FunctionEntry) => {
-        entries.set(entry.handlerFile, (entries.get(entry.handlerFile) || []).concat(entry));
+        entries.set(entry.source, (entries.get(entry.source) || []).concat(entry));
 
         return entries;
       }, new Map<string, FunctionEntry[]>());
@@ -75,7 +75,8 @@ export default class ServerlessRollupPlugin implements Plugin {
   async rollupFunction() {
     const installCommand = this.configuration.installCommand || "npm install";
 
-    for (const functionEntries of this.entries.values()) {
+    for (const [input, functionEntries] of this.entries.entries()) {
+      const bundle = await buildBundle(input, this.rollupConfig);
       for (const functionEntry of functionEntries) {
         this.serverless.cli.log(`.: Function ${functionEntry.function.name} :.`);
 
@@ -83,7 +84,8 @@ export default class ServerlessRollupPlugin implements Plugin {
         try {
           this.serverless.cli.log(`Bundling to ${functionEntry.destination}`);
 
-          const rollupOutput = await rollupFunctionEntry(
+          const rollupOutput = await outputBundle(
+            bundle,
             functionEntry,
             this.rollupConfig
           );

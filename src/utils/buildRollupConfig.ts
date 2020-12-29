@@ -2,7 +2,17 @@ import { FunctionEntry } from "./getEntryForFunction";
 import { RollupOptions, RollupCache } from "rollup";
 import path from "path";
 
-export default (
+export const buildInputConfig = (
+  input: string,
+  rollupConfig: RollupOptions,
+  cache: RollupCache
+): RollupOptions => ({
+    ...rollupConfig,
+    input,
+    cache
+  });
+
+export const buildOutputConfig = (
   functionEntry: FunctionEntry,
   rollupConfig: RollupOptions,
   cache: RollupCache
@@ -18,7 +28,6 @@ export default (
   return {
     output: configOutput,
     ...rollupConfig,
-    input: functionEntry.source,
     cache
   };
 };
