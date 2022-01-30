@@ -40,7 +40,7 @@
     "typescript": "^3.9.7"
   },
   "peerDependencies": {
-    "serverless": "^1.42.2 || ^2.0.0",
+    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0",
     "rollup": "^2.26.0"
   },
   "scripts": {
