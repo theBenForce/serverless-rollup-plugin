@@ -1,15 +1,15 @@
 import path from "path";
 import tmp from "tmp";
-import Serverless, { FunctionDefinition } from "serverless";
+import glob from "fast-glob";
+import Serverless, { FunctionDefinitionHandler } from "serverless";
 import { CopyFilesEntry } from "./copyFiles";
-const glob = require("fast-glob");
 
 export interface FunctionEntry {
   source: string;
   destination: string;
   handler: string;
   handlerFile: string;
-  function: FunctionDefinition & {
+  function: FunctionDefinitionHandler & {
     dependencies: string[];
     copyFiles?: CopyFilesEntry[];
   };
@@ -31,7 +31,7 @@ function getEntryExtension(
 
   const files: Array<string> = glob.sync(`${fileName}.*`, {
     cwd: serverless.config.servicePath,
-    nodir: true,
+    onlyFiles: true,
     ignore
   });
 
@@ -65,7 +65,7 @@ function getEntryExtension(
 export default (
   serverless: Serverless,
   ignore: Array<string>,
-  serverlessFunction: FunctionDefinition & {
+  serverlessFunction: FunctionDefinitionHandler & {
     dependencies: string[];
   }
 ): FunctionEntry => {

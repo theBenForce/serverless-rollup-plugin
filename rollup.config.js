@@ -1,9 +1,7 @@
-import commonjs from "rollup-plugin-commonjs";
-import typescript from "rollup-plugin-typescript2";
-import resolve from "rollup-plugin-node-resolve";
-import sourcemaps from "rollup-plugin-sourcemaps";
-import builtins from "builtin-modules";
+import typescript from "@rollup/plugin-typescript";
 import cleanup from "rollup-plugin-cleanup";
+
+import { builtinModules as builtins } from 'module';
 
 import pkg from "./package.json";
 
@@ -13,21 +11,15 @@ export default {
     {
       file: "dist/index.js",
       format: "cjs",
-      exports: "auto"
+      exports: "auto",
+      sourcemap: true
     }
   ],
   plugins: [
-    typescript({
-      useTsconfigDeclarationDir: true,
-      typescript: require("typescript"),
-      verbosity: 2
-    }),
-    resolve({ preferBuiltins: true }),
-    commonjs(),
+    typescript(),
     cleanup({
       extensions: ["js", "ts"]
-    }),
-    sourcemaps()
+    })
   ],
   external: [
     "rollup",
