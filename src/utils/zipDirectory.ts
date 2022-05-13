@@ -10,7 +10,7 @@ export default async (
   source: string,
   name: string
 ): Promise<string> => {
-  const zip = archiver.create("zip");
+  const zip = archiver("zip");
 
   const artifactPath = path.join(
     serverless.config.servicePath,
