@@ -17,17 +17,17 @@ export const buildOutputConfig = (
   rollupConfig: RollupOptions,
   cache: RollupCache
 ): RollupOptions => {
-  let configOutput: any = {
+  const output: any = rollupConfig?.output ?? {
     format: "cjs",
     sourcemap: true
   };
-  if (rollupConfig && rollupConfig.output) {
-    configOutput = rollupConfig.output;
-  }
-  configOutput.file = path.join(functionEntry.destination, `index.js`);
+
+  const file = `index.${output.format === "esm" ? 'mjs' : 'js'}`;
+  output.file = path.join(functionEntry.destination, file);
+
   return {
-    output: configOutput,
     ...rollupConfig,
+    output,
     cache
   };
 };
