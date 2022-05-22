@@ -33,8 +33,8 @@
     "typescript": "^4.6.4"
   },
   "peerDependencies": {
-    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0",
-    "rollup": "^2.26.0"
+    "rollup": "^2.26.0",
+    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0"
   },
   "scripts": {
     "build": "rollup -c",
@@ -47,12 +47,11 @@
     }
   },
   "dependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
     "archiver": "^5.3.1",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.11",
     "globby": "^11.0.1",
+    "module-from-string": "^3.1.4",
     "tmp": "^0.2.1"
   }
 }
