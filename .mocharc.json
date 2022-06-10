@@ -1,0 +1,6 @@
+{
+  "reporter": "spec",
+  "ui": "bdd",
+  "extension": ["js", "ts"],
+  "require": ["./test/setup.js", "ts-node/register"]
+}

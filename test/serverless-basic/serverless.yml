@@ -1,0 +1,18 @@
+service: aws-node-project
+
+frameworkVersion: '3'
+
+plugins:
+  - ../../.. # serverless-rollup-plugin after moving to mjs
+
+custom:
+  rollup:
+    config: ./rollup.config.js
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+functions:
+  hello:
+    handler: handler.hello

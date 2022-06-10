@@ -18,28 +18,37 @@
     "@semantic-release/github": "^7.0.7",
     "@semantic-release/npm": "^7.0.5",
     "@semantic-release/release-notes-generator": "^9.0.1",
+    "@serverless/test": "^11.0.0",
     "@types/archiver": "^5.3.1",
     "@types/babel__core": "^7.1.19",
     "@types/globby": "^9.1.0",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.33",
     "@types/serverless": "^3.12.5",
     "@types/tmp": "^0.2.3",
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
     "commitizen": "^4.1.2",
     "cz-conventional-changelog": "^3.2.0",
+    "mocha": "^10.0.0",
+    "module-from-string": "^3.1.4",
+    "node-stream-zip": "^1.15.0",
     "rollup": "^2.72.1",
     "rollup-plugin-cleanup": "^3.2.1",
     "semantic-release": "^17.1.1",
+    "serverless": "^3.19.0",
+    "ts-node": "^10.8.1",
     "tslib": "^2.4.0",
     "typescript": "^4.6.4"
   },
   "peerDependencies": {
-    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0",
-    "rollup": "^2.26.0"
+    "rollup": "^2.26.0",
+    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0"
   },
   "scripts": {
     "build": "rollup -c",
     "prepare": "yarn build",
-    "test": "exit 0"
+    "test": "mocha"
   },
   "config": {
     "commitizen": {
