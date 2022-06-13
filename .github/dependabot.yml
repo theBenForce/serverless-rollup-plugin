@@ -5,6 +5,9 @@ updates:
       versioning-strategy: increase
       schedule:
           interval: weekly
+      ignore:
+        - dependency-name: "execa" # TODO: remove when making esm-only
+        - dependency-name: "globby" # TODO: remove when making esm-only
     - package-ecosystem: github-actions
       directory: /
       schedule:
