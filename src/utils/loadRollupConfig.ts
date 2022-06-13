@@ -13,7 +13,7 @@ const loadScript = async (filename: string): Promise<RollupOptions> => {
   const {
     output: [{ code }],
   } = await bundle.generate({
-    exports: 'named',
+    exports: 'default',
     format: 'cjs',
   });
 
