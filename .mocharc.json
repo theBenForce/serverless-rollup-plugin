@@ -2,6 +2,6 @@
   "reporter": "spec",
   "ui": "bdd",
   "extension": ["js", "ts"],
-  "timeout": 3000,
+  "timeout": 5000,
   "require": ["./test/setup.js", "ts-node/register"]
 }
