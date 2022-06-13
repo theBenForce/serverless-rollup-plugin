@@ -1,23 +1,51 @@
 import { join } from "path";
 import { expect } from "chai";
 import StreamZip from "node-stream-zip";
-import { requireFromString } from 'module-from-string';
+import { importFromStringSync, requireFromString } from 'module-from-string';
 import runServerless from "@serverless/test/run-serverless";
 
-describe('Some suite', () => {
-  it('Some test that involves creation of serverless instance', async () => {
+const serverlessRoot = join(require.resolve("serverless"), "..", "..");
+
+describe('general', () => {
+  it('should package function as cjs', async () => {
     const cwd = join(__dirname, "serverless-basic");
-    await runServerless(join(require.resolve("serverless"), "..", ".."), {
+    await runServerless(serverlessRoot, {
         cwd,
         command: "package"
     });
 
-    const zip = new StreamZip.async({ file: join(cwd, ".serverless", "aws-node-project-dev-hello.zip") });
+    const zip = new StreamZip.async({ file: join(cwd, ".serverless", "serverless-basic-dev-hello.zip") });
     const js = await zip.entryData("index.js");
 
-    return expect(requireFromString(js.toString("utf8")).hello()).to.become({
-      body: "{\n  \"message\": \"Go Serverless v2.0! Your function executed successfully!\"\n}",
+    return expect(requireFromString(js.toString("utf8")).hello({ name: "event" })).to.become({
+      body: `{
+  "message": "Go Serverless v2.0! Your function executed successfully!",
+  "input": {
+    "name": "event"
+  }
+}`,
       statusCode: 200,
-    })
-  });
+    });
+  }).timeout(3000);
+
+  it('should package function as esm', async () => {
+    const cwd = join(__dirname, "serverless-basic-esm");
+    await runServerless(serverlessRoot, {
+        cwd,
+        command: "package"
+    });
+
+    const zip = new StreamZip.async({ file: join(cwd, ".serverless", "serverless-basic-dev-hello.zip") });
+    const js = await zip.entryData("index.mjs");
+
+    return expect(importFromStringSync(js.toString("utf8")).hello({ name: "event" })).to.become({
+      body: `{
+  "message": "Go Serverless v2.0! Your function executed successfully!",
+  "input": {
+    "name": "event"
+  }
+}`,
+      statusCode: 200,
+    });
+  }).timeout(3000);
 });

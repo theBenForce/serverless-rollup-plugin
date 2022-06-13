@@ -1459,6 +1459,18 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
+"@types/chai-as-promised@^7.1.5":
+  "integrity" "sha512-jStwss93SITGBwt/niYrkf2C+/1KTeZCZl1LaeezTlqppAKeoQC7jxyqYuP72sxBGKCIbw7oHgbYssIRzT5FCQ=="
+  "resolved" "https://registry.npmjs.org/@types/chai-as-promised/-/chai-as-promised-7.1.5.tgz"
+  "version" "7.1.5"
+  dependencies:
+    "@types/chai" "*"
+
+"@types/chai@*", "@types/chai@^4.3.1":
+  "integrity" "sha512-/zPMqDkzSZ8t3VtxOa4KPq7uzzW978M9Tvh+j7GHKuo6k6GTLxPJ4J5gE5cjfJ26pnXst0N5Hax8Sr0T2Mi9zQ=="
+  "resolved" "https://registry.npmjs.org/@types/chai/-/chai-4.3.1.tgz"
+  "version" "4.3.1"
+
 "@types/color-name@^1.1.1":
   "integrity" "sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ=="
   "resolved" "https://registry.npmjs.org/@types/color-name/-/color-name-1.1.1.tgz"
@@ -3166,7 +3178,7 @@
     "strip-dirs" "^2.0.0"
 
 "dedent@0.7.0":
-  "integrity" "sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw="
+  "integrity" "sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA=="
   "resolved" "https://registry.npmjs.org/dedent/-/dedent-0.7.0.tgz"
   "version" "0.7.0"
 
