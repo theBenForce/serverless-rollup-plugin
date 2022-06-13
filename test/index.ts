@@ -26,7 +26,7 @@ describe('general', () => {
 }`,
       statusCode: 200,
     });
-  }).timeout(3000);
+  });
 
   it('should package function as esm', async () => {
     const cwd = join(__dirname, "serverless-basic-esm");
@@ -47,5 +47,5 @@ describe('general', () => {
 }`,
       statusCode: 200,
     });
-  }).timeout(3000);
+  });
 });
