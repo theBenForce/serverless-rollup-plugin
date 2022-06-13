@@ -33,7 +33,6 @@
     "commitizen": "^4.1.2",
     "cz-conventional-changelog": "^3.2.0",
     "mocha": "^10.0.0",
-    "module-from-string": "^3.1.4",
     "node-stream-zip": "^1.15.0",
     "rollup": "^2.72.1",
     "rollup-plugin-cleanup": "^3.2.1",
@@ -58,12 +57,11 @@
     }
   },
   "dependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.17.10",
     "archiver": "^5.3.1",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.11",
     "globby": "^11.0.1",
+    "module-from-string": "^3.1.4",
     "tmp": "^0.2.1"
   }
 }

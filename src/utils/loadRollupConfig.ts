@@ -1,24 +1,23 @@
 import Serverless from "serverless";
-import { RollupOptions } from "rollup";
+import { rollup, RollupOptions } from "rollup";
 import path from "path";
-import * as babel from "@babel/core";
+import { requireFromString } from 'module-from-string';
 
 const loadScript = async (filename: string): Promise<RollupOptions> => {
-  const transformResult = await babel.transformFileAsync(filename, {
-    filename,
-    presets: [["@babel/preset-env", { targets: { node: true } }]],
-    cwd: process.cwd(),
-    sourceRoot: process.cwd(),
-    root: process.cwd()
+  const bundle = await rollup({
+    external: () => true,
+    input: filename,
+    treeshake: false,
   });
 
-  let script: RollupOptions;
-  if (transformResult && transformResult.code) {
-    script = eval(transformResult.code);
-  }
+  const {
+    output: [{ code }],
+  } = await bundle.generate({
+    exports: 'default',
+    format: 'cjs',
+  });
 
-  // @ts-ignore
-  return script;
+  return requireFromString(code);
 };
 
 export default async (
