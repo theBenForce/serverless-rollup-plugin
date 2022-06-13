@@ -36,7 +36,7 @@
     "node-stream-zip": "^1.15.0",
     "rollup": "^2.72.1",
     "rollup-plugin-cleanup": "^3.2.1",
-    "semantic-release": "^17.1.1",
+    "semantic-release": "^19.0.3",
     "serverless": "^3.19.0",
     "ts-node": "^10.8.1",
     "tslib": "^2.4.0",
