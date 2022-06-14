@@ -1,12 +1,13 @@
-import { buildInputConfig, buildOutputConfig } from "./buildRollupConfig";
-import { FunctionEntry } from "./getEntryForFunction";
-import rollup, {
+import {
+  rollup,
   RollupOptions,
   RollupBuild,
   OutputOptions,
   RollupOutput,
   RollupCache,
-} from "rollup";
+} from 'rollup';
+import { buildInputConfig, buildOutputConfig } from './buildRollupConfig.js';
+import { FunctionEntry } from './getEntryForFunction.js';
 
 let cache: RollupCache;
 export const buildBundle = async (
@@ -16,10 +17,10 @@ export const buildBundle = async (
   const config: RollupOptions = buildInputConfig(
     input,
     rollupConfig,
-    cache
+    cache,
   );
 
-  const bundle: RollupBuild = await rollup.rollup(config);
+  const bundle: RollupBuild = await rollup(config);
   cache = bundle.cache;
 
   return bundle;
@@ -33,11 +34,11 @@ export const outputBundle = async (
   const config: RollupOptions = buildOutputConfig(
     functionEntry,
     rollupConfig,
-    cache
+    cache,
   );
 
   const rollupOutput: RollupOutput = await bundle.write(
-    config.output as OutputOptions
+    config.output as OutputOptions,
   );
 
   if (!rollupOutput.output?.length) {

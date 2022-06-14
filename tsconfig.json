@@ -1,19 +1,10 @@
 {
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "module": "ES2015",
-    "target": "es2017",
-    "lib": ["es6"],
+    "module": "nodenext",
+    "target": "esnext",
+    "lib": ["es6", "dom"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "node"
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
+    "sourceMap": true
   }
 }

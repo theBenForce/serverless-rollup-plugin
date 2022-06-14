@@ -3,7 +3,7 @@ service: serverless-basic
 frameworkVersion: '3'
 
 plugins:
-  - ../../.. # serverless-rollup-plugin after moving to mjs
+  - serverless-rollup-plugin # self-import
 
 custom:
   rollup:

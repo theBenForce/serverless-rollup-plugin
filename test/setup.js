@@ -1,3 +1,3 @@
-const { use } = require("chai");
+import { use } from 'chai';
 
-use(require("chai-as-promised"));
+use((await import('chai-as-promised')).default); // eslint-disable-line unicorn/no-await-expression-member

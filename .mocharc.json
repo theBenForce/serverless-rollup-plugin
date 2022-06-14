@@ -3,5 +3,6 @@
   "ui": "bdd",
   "extension": ["js", "ts"],
   "timeout": 5000,
-  "require": ["./test/setup.js", "ts-node/register"]
+  "loader": "ts-node/esm",
+  "require": ["./test/setup.js"]
 }

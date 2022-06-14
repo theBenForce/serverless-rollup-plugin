@@ -1,5 +1,5 @@
 export default {
   output: {
-    format: "cjs",
-  }
+    format: 'esm',
+  },
 };
