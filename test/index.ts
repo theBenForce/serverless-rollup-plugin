@@ -3,12 +3,24 @@ import { createRequire } from 'node:module';
 import { expect } from 'chai';
 import StreamZip from 'node-stream-zip';
 import { importFromStringSync, requireFromString } from 'module-from-string';
+import logEmitter from 'log/lib/emitter.js';
 import runServerless from '@serverless/test/run-serverless.js';
 
 const require = createRequire(import.meta.url);
 const serverlessRoot = join(require.resolve('serverless'), '..', '..');
 
+const logsBuffer = [];
+logEmitter.on('log', (event) => {
+  if (event.logger.namespace.endsWith('dist')) {
+    logsBuffer.push(event.messageTokens[0]);
+  }
+});
+
 describe('general', () => {
+  before(() => {
+    logsBuffer.splice(0, logsBuffer.length);
+  });
+
   it('should package function as cjs', async () => {
     const cwd = new URL('fixtures/serverless-basic', import.meta.url).pathname;
     await runServerless(serverlessRoot, {
@@ -61,6 +73,9 @@ describe('general', () => {
       cwd,
       command: 'package',
     });
+
+    expect(logsBuffer.some((message) => message.startsWith('Please switch to using \'mjs\' extension'))).to.be.true();
+    expect(logsBuffer.some((message) => message.endsWith('Will load using commonjs transpilation.'))).to.be.true();
 
     const zip = new StreamZip.async({ // eslint-disable-line new-cap
       file: join(cwd, '.serverless', 'serverless-basic-dev-hello.zip'),

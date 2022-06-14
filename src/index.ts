@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { RollupOptions, OutputChunk, OutputAsset } from 'rollup';
-import Serverless from 'serverless';
+import Serverless, { FunctionDefinitionHandler } from 'serverless';
 import Plugin, { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import loadRollupConfig from './utils/loadRollupConfig.js';
 import zipDirectory from './utils/zipDirectory.js';
@@ -42,11 +42,10 @@ export default class ServerlessRollupPlugin implements Plugin {
 
     this.entries = functions
       .map((functionName: string) => this.serverless.service.getFunction(functionName))
-      .filter((functionDefinition: Serverless.FunctionDefinition) => (functionDefinition.runtime ?? runtime)?.toLowerCase().startsWith('node'))
-      .map((functionDefinition: Serverless.FunctionDefinition) => getEntryForFunction(
+      .filter((functionDefinition: FunctionDefinitionHandler) => (functionDefinition.runtime ?? runtime)?.toLowerCase().startsWith('node'))
+      .map((functionDefinition: FunctionDefinitionHandler) => getEntryForFunction(
         this.serverless,
         this.configuration.excludeFiles,
-        // @ts-expect-error
         functionDefinition,
         this.logging,
       ))
