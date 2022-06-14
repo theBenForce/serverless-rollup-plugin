@@ -1,7 +1,9 @@
 import path from 'node:path';
 import { RollupOptions, OutputChunk, OutputAsset } from 'rollup';
+import map from 'p-map';
 import Serverless, { FunctionDefinitionHandler } from 'serverless';
 import Plugin, { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
+import { cpus } from 'node:os';
 import loadRollupConfig from './utils/loadRollupConfig.js';
 import zipDirectory from './utils/zipDirectory.js';
 import getEntryForFunction, { FunctionEntry } from './utils/getEntryForFunction.js';
@@ -9,6 +11,8 @@ import { CustomConfiguration } from './customConfiguration.js';
 import { buildBundle, outputBundle } from './utils/rollupFunctionEntry.js';
 import installDependencies from './utils/installDependencies.js';
 import copyFiles from './utils/copyFiles.js';
+
+const concurrency = cpus().length;
 
 export default class ServerlessRollupPlugin implements Plugin {
   readonly hooks: { [key: string]: any } = {
@@ -67,18 +71,19 @@ export default class ServerlessRollupPlugin implements Plugin {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const [input, functionEntries] of this.entries.entries()) {
+      this.logging.log.info(`Bundling ${input}`);
       // eslint-disable-next-line no-await-in-loop
       const bundle = await buildBundle(input, this.rollupConfig);
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (const functionEntry of functionEntries) {
+      // eslint-disable-next-line no-await-in-loop
+      await map(functionEntries, async (functionEntry) => {
         this.logging.log.info(`.: Function ${functionEntry.function.name} :.`);
 
-        this.logging.log.info(`Creating config for ${functionEntry.source}`);
+        this.logging.log.info(`${functionEntry.function.name}: Creating config for ${functionEntry.source}`);
         try {
-          this.logging.log.info(`Bundling to ${functionEntry.destination}`);
+          this.logging.log.info(`${functionEntry.function.name}: Outputting bundle to ${functionEntry.destination}`);
 
-          const rollupOutput = await outputBundle( // eslint-disable-line no-await-in-loop
+          const rollupOutput = await outputBundle(
             bundle,
             functionEntry,
             this.rollupConfig,
@@ -95,11 +100,9 @@ export default class ServerlessRollupPlugin implements Plugin {
             [],
           );
 
-          this.logging.log.info(
-            `Excluded the following imports: ${excludedLibraries.join(', ')}`,
-          );
+          this.logging.log.info(`${functionEntry.function.name}: Excluded the following imports: ${excludedLibraries.join(', ')}`);
 
-          await installDependencies( // eslint-disable-line no-await-in-loop
+          await installDependencies(
             functionEntry,
             this.configuration.dependencies || [],
             installCommand,
@@ -107,36 +110,31 @@ export default class ServerlessRollupPlugin implements Plugin {
           );
 
           if (functionEntry.function.copyFiles) {
-            await copyFiles(functionEntry, this.logging); // eslint-disable-line no-await-in-loop
+            await copyFiles(functionEntry, this.logging);
           }
 
-          this.logging.log.info(
-            `Creating zip file for ${functionEntry.function.name}`,
-          );
-          const artifactPath = await zipDirectory( // eslint-disable-line no-await-in-loop
+          this.logging.log.info(`${functionEntry.function.name}: Creating zip file for ${functionEntry.function.name}`);
+          const artifactPath = await zipDirectory(
             this.serverless,
             functionEntry.destination,
             functionEntry.function.name,
             this.logging,
           );
 
-          this.logging.log.info(`Path to artifact: ${artifactPath}`);
+          this.logging.log.info(`${functionEntry.function.name}: Path to artifact: ${artifactPath}`);
 
-          // @ts-ignore
-          functionEntry.function.package = {
+          functionEntry.function.package = { // eslint-disable-line no-param-reassign
             artifact: path.relative(
               this.serverless.config.servicePath,
               artifactPath,
             ),
           };
         } catch (error) {
-          this.logging.log.info(
-            `Error while packaging ${functionEntry.source}: ${error.message}`,
-          );
+          this.logging.log.info(`${functionEntry.function.name}: Error while packaging ${functionEntry.source}: ${error.message}`);
 
           throw error;
         }
-      }
+      }, { concurrency });
     }
   }
 

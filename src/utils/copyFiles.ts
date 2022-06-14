@@ -1,6 +1,6 @@
 import { join, dirname } from 'node:path';
 import { mkdir, copyFile } from 'node:fs/promises';
-import { globbySync as globby } from 'globby';
+import { globby } from 'globby';
 import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import { FunctionEntry } from './getEntryForFunction.js'; // eslint-disable-line import/no-cycle
 
@@ -24,8 +24,8 @@ function getCopyFiles(functionEntry: FunctionEntry): Array<CopyFilesAdvanced> {
 export default async (functionEntry: FunctionEntry, { log }: Logging) => {
   const copyFiles = getCopyFiles(functionEntry);
 
-  await Promise.all(copyFiles.map((entry) => {
-    const files = globby([entry.glob]);
+  await Promise.all(copyFiles.map(async (entry) => {
+    const files = await globby([entry.glob]);
 
     log.info(`Copying: ${JSON.stringify(files)}`);
 

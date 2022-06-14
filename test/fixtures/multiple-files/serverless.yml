@@ -1,0 +1,20 @@
+service: multiple-files
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-rollup-plugin # self-import
+
+custom:
+  rollup:
+    config: ./rollup.config.js
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+functions:
+  hello:
+    handler: hello.handle
+  world:
+    handler: world.handle
