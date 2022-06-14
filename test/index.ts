@@ -54,4 +54,27 @@ describe('general', () => {
       statusCode: 200,
     });
   });
+
+  it('should transpile rollup.config.js to commonjs if required', async () => {
+    const cwd = new URL('fixtures/rollup-transpile-commonjs', import.meta.url).pathname;
+    await runServerless(serverlessRoot, {
+      cwd,
+      command: 'package',
+    });
+
+    const zip = new StreamZip.async({ // eslint-disable-line new-cap
+      file: join(cwd, '.serverless', 'serverless-basic-dev-hello.zip'),
+    });
+    const js = await zip.entryData('index.mjs');
+
+    return expect(importFromStringSync(js.toString('utf8')).hello({ name: 'event' })).to.become({
+      body: `{
+  "message": "Go Serverless v2.0! Your function executed successfully!",
+  "input": {
+    "name": "event"
+  }
+}`,
+      statusCode: 200,
+    });
+  });
 });

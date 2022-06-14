@@ -1,7 +1,6 @@
+import path from 'node:path';
 import Serverless from 'serverless';
 import { rollup, RollupOptions } from 'rollup';
-import path from 'node:path';
-import { requireFromString } from 'module-from-string';
 
 const loadScript = async (filename: string): Promise<RollupOptions> => {
   const bundle = await rollup({
@@ -17,6 +16,8 @@ const loadScript = async (filename: string): Promise<RollupOptions> => {
     format: 'cjs',
   });
 
+  // import only if absolutely necessary
+  const { requireFromString } = await import('module-from-string');
   return requireFromString(code);
 };
 
@@ -38,7 +39,19 @@ export default async (
       );
     }
     try {
-      rollupConfig = await loadScript(rollupConfigFilePath);
+      rollupConfig = await import(rollupConfigFilePath)
+        .then(
+          ({ default: rollupConfigExport }) => rollupConfigExport,
+          (error) => {
+            if (error instanceof SyntaxError) {
+              serverless.cli.log(`Failed to import ${rollupConfigFilePath}. Will load using commonjs transpilation.`);
+              serverless.cli.log("Please switch to using 'mjs' extension, or 'type': 'module' in 'package.json', since this feature will be removed in a future release.");
+
+              return loadScript(rollupConfigFilePath);
+            }
+            throw error;
+          },
+        );
 
       if (rollupConfig.input) {
         delete rollupConfig.input;
