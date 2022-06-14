@@ -65,6 +65,16 @@ custom:
       - some-package-name
 ```
 
+### Setup concurrency
+
+This value is used to determine the number of concurrent bundles being output by rollup.
+
+```yaml
+custom:
+  rollup:
+    concurrency: 5 # the default value
+```
+
 ### Output Options
 
 If you don't specify `output` settings in your rollup config, the following defaults will be used:
@@ -75,6 +85,8 @@ If you don't specify `output` settings in your rollup config, the following defa
   "sourcemap": true
 }
 ```
+
+If the `format` is `esm`, the resulting package will use the `mjs` extension to make use of [native lambda esm support](https://aws.amazon.com/blogs/compute/using-node-js-es-modules-and-top-level-await-in-aws-lambda/).
 
 ### Adding Sourcemap Support
 

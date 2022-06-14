@@ -3,7 +3,6 @@ import { RollupOptions, OutputChunk, OutputAsset } from 'rollup';
 import map from 'p-map';
 import Serverless, { FunctionDefinitionHandler } from 'serverless';
 import Plugin, { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
-import { cpus } from 'node:os';
 import loadRollupConfig from './utils/loadRollupConfig.js';
 import zipDirectory from './utils/zipDirectory.js';
 import getEntryForFunction, { FunctionEntry } from './utils/getEntryForFunction.js';
@@ -11,8 +10,6 @@ import { CustomConfiguration } from './customConfiguration.js';
 import { buildBundle, outputBundle } from './utils/rollupFunctionEntry.js';
 import installDependencies from './utils/installDependencies.js';
 import copyFiles from './utils/copyFiles.js';
-
-const concurrency = cpus().length;
 
 export default class ServerlessRollupPlugin implements Plugin {
   readonly hooks: { [key: string]: any } = {
@@ -67,7 +64,8 @@ export default class ServerlessRollupPlugin implements Plugin {
   }
 
   async rollupFunction() {
-    const installCommand = this.configuration.installCommand || 'npm install';
+    const installCommand = this.configuration.installCommand ?? 'npm install';
+    const concurrency = this.configuration.concurrency ?? 5;
 
     // eslint-disable-next-line no-restricted-syntax
     for (const [input, functionEntries] of this.entries.entries()) {

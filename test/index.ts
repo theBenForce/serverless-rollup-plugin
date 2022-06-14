@@ -108,7 +108,6 @@ describe('general', () => {
     expect(logsBuffer.filter((message) => message.startsWith('multiple-functions-per-file-dev-hello: Outputting bundle '))).to.have.lengthOf(1);
     expect(logsBuffer.filter((message) => message.startsWith('multiple-functions-per-file-dev-world: Outputting bundle '))).to.have.lengthOf(1);
 
-    console.log(logsBuffer);
     const [hello, world] = await Promise.all([
       await new StreamZip.async({ // eslint-disable-line new-cap
         file: join(cwd, '.serverless', 'multiple-functions-per-file-dev-hello.zip'),
