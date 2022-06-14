@@ -1,7 +1,7 @@
 import { join, dirname } from 'node:path';
 import { mkdir, copyFile } from 'node:fs/promises';
-import Serverless from 'serverless';
 import { globbySync as globby } from 'globby';
+import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import { FunctionEntry } from './getEntryForFunction.js'; // eslint-disable-line import/no-cycle
 
 interface CopyFilesAdvanced {
@@ -21,13 +21,13 @@ function getCopyFiles(functionEntry: FunctionEntry): Array<CopyFilesAdvanced> {
   });
 }
 
-export default async (serverless: Serverless, functionEntry: FunctionEntry) => {
+export default async (functionEntry: FunctionEntry, { log }: Logging) => {
   const copyFiles = getCopyFiles(functionEntry);
 
   await Promise.all(copyFiles.map((entry) => {
     const files = globby([entry.glob]);
 
-    serverless.cli.log(`Copying: ${JSON.stringify(files)}`);
+    log.info(`Copying: ${JSON.stringify(files)}`);
 
     return Promise.all(
       files.map(async (filename) => {
@@ -43,7 +43,7 @@ export default async (serverless: Serverless, functionEntry: FunctionEntry) => {
 
         await mkdir(destDir, { recursive: true });
 
-        serverless.cli.log(`Copying ${filename} to ${destination}...`);
+        log.info(`Copying ${filename} to ${destination}...`);
         await copyFile(filename, destination);
       }),
     );

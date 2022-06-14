@@ -1,6 +1,7 @@
 import path from 'node:path';
 import Serverless from 'serverless';
 import { rollup, RollupOptions } from 'rollup';
+import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 
 const loadScript = async (filename: string): Promise<RollupOptions> => {
   const bundle = await rollup({
@@ -24,6 +25,7 @@ const loadScript = async (filename: string): Promise<RollupOptions> => {
 export default async (
   serverless: Serverless,
   config: string | RollupOptions,
+  { log }: Logging,
 ): Promise<RollupOptions> => {
   let rollupConfig: RollupOptions;
 
@@ -44,8 +46,8 @@ export default async (
           ({ default: rollupConfigExport }) => rollupConfigExport,
           (error) => {
             if (error instanceof SyntaxError) {
-              serverless.cli.log(`Failed to import ${rollupConfigFilePath}. Will load using commonjs transpilation.`);
-              serverless.cli.log("Please switch to using 'mjs' extension, or 'type': 'module' in 'package.json', since this feature will be removed in a future release.");
+              log.warning(`Failed to import ${rollupConfigFilePath}. Will load using commonjs transpilation.`);
+              log.warning("Please switch to using 'mjs' extension, or 'type': 'module' in 'package.json', since this feature will be removed in a future release.");
 
               return loadScript(rollupConfigFilePath);
             }
@@ -57,9 +59,9 @@ export default async (
         delete rollupConfig.input;
       }
 
-      serverless.cli.log(`Loaded rollup config from ${rollupConfigFilePath}`);
+      log.info(`Loaded rollup config from ${rollupConfigFilePath}`);
     } catch (error) {
-      serverless.cli.log(
+      log.info(
         `Could not load rollup config '${rollupConfigFilePath}'`,
       );
       throw error;

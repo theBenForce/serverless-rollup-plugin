@@ -1,15 +1,15 @@
 import { join } from 'node:path';
 import { cwd } from 'node:process';
 import { createRequire } from 'node:module';
-import Serverless from 'serverless';
 import { execa } from 'execa';
+import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import { FunctionEntry } from './getEntryForFunction.js';
 
 export default async (
-  serverless: Serverless,
   functionEntry: FunctionEntry,
   globalDependencies: Array<string>,
   installCommand: string,
+  { log }: Logging,
 ) => {
   const functionDependencies = [...functionEntry.function.dependencies, ...globalDependencies]
     .reduce((current: Array<string>, next: string) => {
@@ -22,7 +22,7 @@ export default async (
 
   if (!functionDependencies?.length) return;
 
-  serverless.cli.log(`Installing ${functionDependencies.length} dependencies`);
+  log.info(`Installing ${functionDependencies.length} dependencies`);
 
   const require = createRequire(import.meta.url);
   const pkg = JSON.parse(require(join(cwd(), 'package.json'))); // eslint-disable-line import/no-dynamic-require
@@ -44,9 +44,7 @@ export default async (
   );
 
   const finalInstallCommand = [installCommand, ...finalDependencies].join(' ');
-  serverless.cli.log(
-    `Executing ${finalInstallCommand} in ${functionEntry.destination}`,
-  );
+  log.info(`Executing ${finalInstallCommand} in ${functionEntry.destination}`);
 
   await execa(finalInstallCommand, {
     cwd: functionEntry.destination,

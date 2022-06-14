@@ -2,6 +2,7 @@ import path from 'node:path';
 import tmp from 'tmp';
 import glob from 'fast-glob';
 import Serverless, { FunctionDefinitionHandler } from 'serverless';
+import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import { CopyFilesEntry } from './copyFiles.js'; // eslint-disable-line import/no-cycle
 
 export interface FunctionEntry {
@@ -24,6 +25,7 @@ function getEntryExtension(
   ignore: Array<string>,
   fileName: string,
   name: string,
+  { log }: Logging,
 ) {
   const preferredExtensions = ['.js', '.ts', '.jsx', '.tsx'];
 
@@ -54,7 +56,7 @@ function getEntryExtension(
     }, []);
 
   if (sortedFiles.length > 1) {
-    serverless.cli.log(
+    log.info(
       `WARNING: More than one matching handlers found for '${fileName}'. Using '${sortedFiles[0]}'. Function ${name}`,
     );
   }
@@ -65,8 +67,9 @@ export default (
   serverless: Serverless,
   ignore: Array<string>,
   serverlessFunction: FunctionDefinitionHandler & {
-    dependencies: string[];
+    dependencies?: string[];
   },
+  logging: Logging,
 ): FunctionEntry => {
   const baseDir = tmp.dirSync({ prefix: serverlessFunction.name });
 
@@ -83,18 +86,17 @@ export default (
     ignore,
     handlerFile,
     serverlessFunction.name,
+    logging,
   );
   serverlessFunction.handler = `index.${handlerEntry}`; // eslint-disable-line no-param-reassign
-
-  if (!serverlessFunction.dependencies) {
-    serverlessFunction.dependencies = []; // eslint-disable-line no-param-reassign
-  }
 
   return {
     source: `./${handlerFile}${ext}`,
     destination: baseDir.name,
     handler: serverlessFunction.handler,
     handlerFile,
-    function: serverlessFunction,
+    function: Object.assign(serverlessFunction, {
+      dependencies: serverlessFunction.dependencies ?? [],
+    }),
   };
 };

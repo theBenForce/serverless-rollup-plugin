@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { RollupOptions, OutputChunk, OutputAsset } from 'rollup';
 import Serverless from 'serverless';
-import Plugin from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
+import Plugin, { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import loadRollupConfig from './utils/loadRollupConfig.js';
 import zipDirectory from './utils/zipDirectory.js';
 import getEntryForFunction, { FunctionEntry } from './utils/getEntryForFunction.js';
@@ -28,6 +28,7 @@ export default class ServerlessRollupPlugin implements Plugin {
   constructor(
     private serverless: Serverless, // eslint-disable-line no-unused-vars
     private options: Serverless.Options, // eslint-disable-line no-unused-vars
+    private logging: Logging, // eslint-disable-line no-unused-vars
   ) {
     this.configuration = this.serverless.service.custom.rollup as CustomConfiguration;
   }
@@ -45,8 +46,9 @@ export default class ServerlessRollupPlugin implements Plugin {
       .map((functionDefinition: Serverless.FunctionDefinition) => getEntryForFunction(
         this.serverless,
         this.configuration.excludeFiles,
-        // @ts-ignore
+        // @ts-expect-error
         functionDefinition,
+        this.logging,
       ))
       .reduce((entries: Map<string, FunctionEntry[]>, entry: FunctionEntry) => {
         entries.set(entry.source, [...(entries.get(entry.source) ?? []), entry]);
@@ -57,6 +59,7 @@ export default class ServerlessRollupPlugin implements Plugin {
     this.rollupConfig = await loadRollupConfig(
       this.serverless,
       this.configuration.config,
+      this.logging,
     );
   }
 
@@ -70,11 +73,11 @@ export default class ServerlessRollupPlugin implements Plugin {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const functionEntry of functionEntries) {
-        this.serverless.cli.log(`.: Function ${functionEntry.function.name} :.`);
+        this.logging.log.info(`.: Function ${functionEntry.function.name} :.`);
 
-        this.serverless.cli.log(`Creating config for ${functionEntry.source}`);
+        this.logging.log.info(`Creating config for ${functionEntry.source}`);
         try {
-          this.serverless.cli.log(`Bundling to ${functionEntry.destination}`);
+          this.logging.log.info(`Bundling to ${functionEntry.destination}`);
 
           const rollupOutput = await outputBundle( // eslint-disable-line no-await-in-loop
             bundle,
@@ -93,31 +96,32 @@ export default class ServerlessRollupPlugin implements Plugin {
             [],
           );
 
-          this.serverless.cli.log(
+          this.logging.log.info(
             `Excluded the following imports: ${excludedLibraries.join(', ')}`,
           );
 
           await installDependencies( // eslint-disable-line no-await-in-loop
-            this.serverless,
             functionEntry,
             this.configuration.dependencies || [],
             installCommand,
+            this.logging,
           );
 
           if (functionEntry.function.copyFiles) {
-            await copyFiles(this.serverless, functionEntry); // eslint-disable-line no-await-in-loop
+            await copyFiles(functionEntry, this.logging); // eslint-disable-line no-await-in-loop
           }
 
-          this.serverless.cli.log(
+          this.logging.log.info(
             `Creating zip file for ${functionEntry.function.name}`,
           );
           const artifactPath = await zipDirectory( // eslint-disable-line no-await-in-loop
             this.serverless,
             functionEntry.destination,
             functionEntry.function.name,
+            this.logging,
           );
 
-          this.serverless.cli.log(`Path to artifact: ${artifactPath}`);
+          this.logging.log.info(`Path to artifact: ${artifactPath}`);
 
           // @ts-ignore
           functionEntry.function.package = {
@@ -127,7 +131,7 @@ export default class ServerlessRollupPlugin implements Plugin {
             ),
           };
         } catch (error) {
-          this.serverless.cli.log(
+          this.logging.log.info(
             `Error while packaging ${functionEntry.source}: ${error.message}`,
           );
 
