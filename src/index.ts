@@ -31,7 +31,7 @@ export default class ServerlessRollupPlugin implements Plugin {
     private options: Serverless.Options, // eslint-disable-line no-unused-vars
     private logging: Logging, // eslint-disable-line no-unused-vars
   ) {
-    this.configuration = this.serverless.service.custom.rollup as CustomConfiguration;
+    this.configuration = this.serverless.service.custom?.rollup ?? {} as CustomConfiguration;
   }
 
   async prepare() {
@@ -58,7 +58,7 @@ export default class ServerlessRollupPlugin implements Plugin {
 
     this.rollupConfig = await loadRollupConfig(
       this.serverless,
-      this.configuration.config,
+      this.configuration.config ?? 'rollup.config.js',
       this.logging,
     );
   }
@@ -104,7 +104,7 @@ export default class ServerlessRollupPlugin implements Plugin {
 
           await installDependencies(
             functionEntry,
-            this.configuration.dependencies || [],
+            this.configuration.dependencies ?? [],
             installCommand,
             this.logging,
           );

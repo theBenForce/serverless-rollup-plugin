@@ -1,0 +1,14 @@
+service: default-config
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-rollup-plugin # self-import
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+functions:
+  hello:
+    handler: handler.hello

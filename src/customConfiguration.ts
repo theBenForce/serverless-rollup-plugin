@@ -4,7 +4,7 @@ export interface CustomConfiguration {
   /**
    * Rollup configuration, or a string pointing to the configuration
    */
-  config: string | RollupOptions;
+  config?: string | RollupOptions;
 
   /**
    * Glob patterns to match files that should be excluded when bundling build results
