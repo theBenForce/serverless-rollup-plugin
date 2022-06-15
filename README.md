@@ -25,14 +25,6 @@ plugins:
   - ...any other plugins
 ```
 
-Under the custom property, add a section for rollup. The only required property to run rollup is the `config` property:
-
-```yaml
-custom:
-  rollup:
-    config: ./rollup.config.js
-```
-
 For each function that you would like to use rollup option, just define the handler option as normal. You can
 optionally define the `dependencies` property as a list of packages to be installed in the `node_modules` folder
 in your lambda.
@@ -44,6 +36,17 @@ testFunction:
     - aws-xray-sdk-core
   copyFiles:
     - some/glob/**/*.pattern
+```
+
+### Config
+
+By default, `serverless-rollup-plugin` will attempt to load `rollup.config.js`.
+In order to override this behavior, you can add the following to configuration options:
+
+```yaml
+custom:
+  rollup:
+    config: ./custom-rollup.config.js
 ```
 
 ### Using Yarn

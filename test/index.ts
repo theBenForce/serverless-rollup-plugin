@@ -168,4 +168,22 @@ describe('general', () => {
       }),
     ]);
   });
+
+  it('should default to using rollup.config.js', async () => {
+    const cwd = new URL('fixtures/default-config', import.meta.url).pathname;
+    await runServerless(serverlessRoot, {
+      cwd,
+      command: 'package',
+    });
+
+    const zip = new StreamZip.async({ // eslint-disable-line new-cap
+      file: join(cwd, '.serverless', 'default-config-dev-hello.zip'),
+    });
+    const js = await zip.entryData('index.js');
+
+    return expect(requireFromString(js.toString('utf8')).hello()).to.become({
+      body: 'default-config',
+      statusCode: 200,
+    });
+  });
 });
