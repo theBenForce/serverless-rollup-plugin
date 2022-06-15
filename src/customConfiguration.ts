@@ -20,9 +20,4 @@ export interface CustomConfiguration {
    * Optional list of dependencies to install to every lambda
    */
   dependencies?: string[];
-
-  /**
-   * Number of concurrent operations to perform, such as outputting rollup bundles
-   */
-  concurrency?: number;
 }

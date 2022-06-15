@@ -78,7 +78,6 @@
     "fast-glob": "^3.2.11",
     "globby": "^13.1.2",
     "module-from-string": "^3.1.4",
-    "p-map": "^5.5.0",
     "tmp": "^0.2.1"
   }
 }

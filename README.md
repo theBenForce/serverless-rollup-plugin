@@ -65,16 +65,6 @@ custom:
       - some-package-name
 ```
 
-### Setup concurrency
-
-This value is used to determine the number of concurrent bundles being output by rollup.
-
-```yaml
-custom:
-  rollup:
-    concurrency: 5 # the default value
-```
-
 ### Output Options
 
 If you don't specify `output` settings in your rollup config, the following defaults will be used:
