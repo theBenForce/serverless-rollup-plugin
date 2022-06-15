@@ -1,4 +1,5 @@
 import path from 'node:path';
+import map from 'p-map';
 import { RollupOptions, OutputChunk, OutputAsset } from 'rollup';
 import Serverless, { FunctionDefinitionHandler } from 'serverless';
 import Plugin, { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
@@ -64,6 +65,9 @@ export default class ServerlessRollupPlugin implements Plugin {
 
   async rollupFunction() {
     const installCommand = this.configuration.installCommand ?? 'npm install';
+    const concurrency = typeof this.configuration.concurrency === 'number'
+      ? this.configuration.concurrency
+      : Number.POSITIVE_INFINITY;
 
     // eslint-disable-next-line no-restricted-syntax
     for (const [input, functionEntries] of this.entries.entries()) {
@@ -72,7 +76,7 @@ export default class ServerlessRollupPlugin implements Plugin {
       const bundle = await buildBundle(input, this.rollupConfig);
 
       // eslint-disable-next-line no-await-in-loop
-      await Promise.all(functionEntries.map(async (functionEntry) => {
+      await map(functionEntries, async (functionEntry) => {
         this.logging.log.info(`.: Function ${functionEntry.function.name} :.`);
 
         this.logging.log.info(`${functionEntry.function.name}: Creating config for ${functionEntry.source}`);
@@ -130,7 +134,7 @@ export default class ServerlessRollupPlugin implements Plugin {
 
           throw error;
         }
-      }));
+      }, { concurrency });
     }
   }
 
