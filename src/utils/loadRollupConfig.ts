@@ -1,7 +1,7 @@
-import Serverless from "serverless";
-import { rollup, RollupOptions } from "rollup";
-import path from "path";
-import { requireFromString } from 'module-from-string';
+import path from 'node:path';
+import Serverless from 'serverless';
+import { rollup, RollupOptions } from 'rollup';
+import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 
 const loadScript = async (filename: string): Promise<RollupOptions> => {
   const bundle = await rollup({
@@ -17,39 +17,54 @@ const loadScript = async (filename: string): Promise<RollupOptions> => {
     format: 'cjs',
   });
 
+  // import only if absolutely necessary
+  const { requireFromString } = await import('module-from-string');
   return requireFromString(code);
 };
 
 export default async (
   serverless: Serverless,
-  config: string | RollupOptions
+  config: string | RollupOptions,
+  { log }: Logging,
 ): Promise<RollupOptions> => {
   let rollupConfig: RollupOptions;
 
-  if (typeof config === "string") {
+  if (typeof config === 'string') {
     const rollupConfigFilePath = path.join(
       serverless.config.servicePath,
-      config
+      config,
     );
     if (!serverless.utils.fileExistsSync(rollupConfigFilePath)) {
       throw new Error(
-        "The rollup plugin could not find the configuration file at: " +
-          rollupConfigFilePath
+        `The rollup plugin could not find the configuration file at: ${
+          rollupConfigFilePath}`,
       );
     }
     try {
-      rollupConfig = await loadScript(rollupConfigFilePath);
+      rollupConfig = await import(rollupConfigFilePath)
+        .then(
+          ({ default: rollupConfigExport }) => rollupConfigExport,
+          (error) => {
+            if (error instanceof SyntaxError) {
+              log.warning(`Failed to import ${rollupConfigFilePath}. Will load using commonjs transpilation.`);
+              log.warning("Please switch to using 'mjs' extension, or 'type': 'module' in 'package.json', since this feature will be removed in a future release.");
+
+              return loadScript(rollupConfigFilePath);
+            }
+            throw error;
+          },
+        );
 
       if (rollupConfig.input) {
         delete rollupConfig.input;
       }
 
-      serverless.cli.log(`Loaded rollup config from ${rollupConfigFilePath}`);
-    } catch (err) {
-      serverless.cli.log(
-        `Could not load rollup config '${rollupConfigFilePath}'`
+      log.info(`Loaded rollup config from ${rollupConfigFilePath}`);
+    } catch (error) {
+      log.info(
+        `Could not load rollup config '${rollupConfigFilePath}'`,
       );
-      throw err;
+      throw error;
     }
   } else {
     rollupConfig = config;

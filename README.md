@@ -13,6 +13,8 @@
 yarn install serverless-rollup-plugin
 ```
 
+Requires Node.js 14.17 and serverless 3.2.
+
 ## Usage
 
 Add the plugin to your serverless config:
@@ -75,6 +77,8 @@ If you don't specify `output` settings in your rollup config, the following defa
   "sourcemap": true
 }
 ```
+
+If the `format` is `esm`, the resulting package will use the `mjs` extension to make use of [native lambda esm support](https://aws.amazon.com/blogs/compute/using-node-js-es-modules-and-top-level-await-in-aws-lambda/).
 
 ### Adding Sourcemap Support
 

@@ -2,7 +2,18 @@
   "name": "serverless-rollup-plugin",
   "version": "1.1.0",
   "description": "A plugin for the serverless framework to build lambda code using rollup",
+  "type": "module",
   "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=14.17.0"
+  },
+  "files": [
+    "dist"
+  ],
   "author": {
     "name": "Ben Force",
     "email": "bforce@teamdrg.com"
@@ -12,7 +23,6 @@
   "bugs": "https://github.com/drg-adaptive/serverless-rollup-plugin/issues",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.3.3",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/github": "^8.0.4",
@@ -22,18 +32,30 @@
     "@types/archiver": "^5.3.1",
     "@types/chai": "^4.3.1",
     "@types/chai-as-promised": "^7.1.5",
+    "@types/dirty-chai": "^2.0.2",
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.42",
     "@types/serverless": "^3.12.7",
     "@types/tmp": "^0.2.3",
+    "@typescript-eslint/eslint-plugin": "^5.28.0",
+    "@typescript-eslint/parser": "^5.28.0",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
+    "dirty-chai": "^2.0.1",
+    "eslint": "^8.17.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-mocha": "^10.0.5",
+    "eslint-plugin-n": "^15.2.2",
+    "eslint-plugin-unicorn": "^42.0.0",
+    "log": "^6.3.1",
     "mocha": "^10.0.0",
     "node-stream-zip": "^1.15.0",
     "rollup": "^2.75.6",
-    "rollup-plugin-cleanup": "^3.2.1",
     "semantic-release": "^19.0.3",
     "serverless": "^3.19.0",
     "ts-node": "^10.8.1",
@@ -45,15 +67,16 @@
     "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0"
   },
   "scripts": {
-    "build": "rollup -c",
+    "lint": "eslint --cache .",
+    "build": "tsc -p tsconfig.dist.json",
     "prepare": "yarn build",
     "test": "mocha"
   },
   "dependencies": {
     "archiver": "^5.3.1",
-    "execa": "^5.1.1",
+    "execa": "^6.1.0",
     "fast-glob": "^3.2.11",
-    "globby": "^11.1.0",
+    "globby": "^13.1.2",
     "module-from-string": "^3.1.4",
     "tmp": "^0.2.1"
   }

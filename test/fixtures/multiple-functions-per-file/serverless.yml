@@ -1,9 +1,9 @@
-service: serverless-basic
+service: multiple-functions-per-file
 
 frameworkVersion: '3'
 
 plugins:
-  - ../../.. # serverless-rollup-plugin after moving to mjs
+  - serverless-rollup-plugin # self-import
 
 custom:
   rollup:
@@ -16,3 +16,5 @@ provider:
 functions:
   hello:
     handler: handler.hello
+  world:
+    handler: handler.world

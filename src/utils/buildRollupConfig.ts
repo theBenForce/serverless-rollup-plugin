@@ -1,33 +1,33 @@
-import { FunctionEntry } from "./getEntryForFunction";
-import { RollupOptions, RollupCache } from "rollup";
-import path from "path";
+import path from 'node:path';
+import { RollupOptions, RollupCache } from 'rollup';
+import { FunctionEntry } from './getEntryForFunction.js';
 
 export const buildInputConfig = (
   input: string,
   rollupConfig: RollupOptions,
-  cache: RollupCache
+  cache: RollupCache,
 ): RollupOptions => ({
-    ...rollupConfig,
-    input,
-    cache
-  });
+  ...rollupConfig,
+  input,
+  cache,
+});
 
 export const buildOutputConfig = (
   functionEntry: FunctionEntry,
   rollupConfig: RollupOptions,
-  cache: RollupCache
+  cache: RollupCache,
 ): RollupOptions => {
   const output: any = rollupConfig?.output ?? {
-    format: "cjs",
-    sourcemap: true
+    format: 'cjs',
+    sourcemap: true,
   };
 
-  const file = `index.${output.format === "esm" ? 'mjs' : 'js'}`;
+  const file = `index.${output.format === 'esm' ? 'mjs' : 'js'}`;
   output.file = path.join(functionEntry.destination, file);
 
   return {
     ...rollupConfig,
     output,
-    cache
+    cache,
   };
 };
