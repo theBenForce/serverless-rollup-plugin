@@ -80,6 +80,20 @@ If you don't specify `output` settings in your rollup config, the following defa
 
 If the `format` is `esm`, the resulting package will use the `mjs` extension to make use of [native lambda esm support](https://aws.amazon.com/blogs/compute/using-node-js-es-modules-and-top-level-await-in-aws-lambda/).
 
+### Concurrency
+
+By default, `serverless-rollup-plugin` will output rollup bundles concurrently.
+In systems with low memory, such as small CI instances, it may be necessary to limit the number concurrent outputs so as not to run out of memory.
+You can define the number of concurrent outputs by using the `concurrency` option:
+
+```yaml
+custom:
+  rollup:
+    concurrency: 3
+```
+
+Any value other than a number will be treated as `Number.POSITIVE_INFINITY`.
+
 ### Adding Sourcemap Support
 
 You can easily get your lambda stack traces to show correct file/line information using the `source-map-support` package.
