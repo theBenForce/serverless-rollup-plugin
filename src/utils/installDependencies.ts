@@ -25,7 +25,7 @@ export default async (
   log.info(`Installing ${functionDependencies.length} dependencies`);
 
   const require = createRequire(import.meta.url);
-  const pkg = JSON.parse(require(join(cwd(), 'package.json'))); // eslint-disable-line import/no-dynamic-require
+  const pkg = require(join(cwd(), 'package.json')); // eslint-disable-line import/no-dynamic-require
   const dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
   const missingDeps = functionDependencies.filter(
     (dep: string) => !dependencies[dep],
