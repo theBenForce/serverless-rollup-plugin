@@ -25,6 +25,12 @@ plugins:
   - ...any other plugins
 ```
 
+Make sure you have package individually turned on:
+```yaml
+package:
+  individually: true
+```
+
 For each function that you would like to use rollup option, just define the handler option as normal. You can
 optionally define the `dependencies` property as a list of packages to be installed in the `node_modules` folder
 in your lambda.
