@@ -22,12 +22,12 @@ export const buildOutputConfig = (
     sourcemap: true,
   };
 
-  const file = `index.${output.format === 'esm' ? 'mjs' : 'js'}`;
-  output.file = path.join(functionEntry.destination, file);
-
   return {
     ...rollupConfig,
-    output,
+    output: {
+      ...output,
+      file: path.join(functionEntry.destination, `index.${output.format === 'esm' ? 'mjs' : 'js'}`),
+    },
     cache,
   };
 };
