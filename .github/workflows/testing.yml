@@ -33,7 +33,7 @@ jobs:
         run: yarn lint
 
       - name: Install rollup
-        run: npm install --no-save rollup@${{ matrix.rollup-version }}
+        run: yarn add rollup@${{ matrix.rollup-version }}
 
       - name: Run Tests
         run: yarn test
