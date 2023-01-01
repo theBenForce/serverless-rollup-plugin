@@ -41,7 +41,7 @@
     "@typescript-eslint/parser": "^5.45.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
-    "commitizen": "^4.2.5",
+    "commitizen": "^4.2.6",
     "cz-conventional-changelog": "^3.3.0",
     "dirty-chai": "^2.0.1",
     "eslint": "^8.28.0",
