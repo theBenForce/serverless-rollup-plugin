@@ -1,0 +1,35 @@
+{
+  "projectName": "serverless-rollup-plugin",
+  "projectOwner": "theBenForce",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "contributors": [
+    {
+      "login": "perrin4869",
+      "name": "Julian Grinblat",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5774716?v=4",
+      "profile": "https://github.com/perrin4869",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "theBenForce",
+      "name": "Ben Force",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1892467?v=4",
+      "profile": "https://theBenForce.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
+  ],
+  "repoType": "github",
+  "contributorsPerLine": 7,
+  "repoHost": "https://github.com",
+  "commitConvention": "angular",
+  "skipCi": true
+}
