@@ -134,12 +134,16 @@ parameter is an array of glob pattern strings, or objects with the following pro
 | srcBase     | No       | Part of the path that will be removed from the destination path |
 | destination | No       | Destination path within the lambda's directory structure        |
 
-## Author
+## 🧑‍💻 Contributors
 
-👤 **Ben Force**
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 
-- Twitter: [@theBenForce](https://twitter.com/theBenForce)
-- Github: [@theBenForce](https://github.com/theBenForce)
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## 🤝 Contributing
 
