@@ -56,7 +56,7 @@
     "mocha": "^10.2.0",
     "node-stream-zip": "^1.15.0",
     "rollup": "^3.21.2",
-    "semantic-release": "^19.0.5",
+    "semantic-release": "^21.0.2",
     "serverless": "^3.30.1",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
