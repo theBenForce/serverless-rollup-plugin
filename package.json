@@ -28,7 +28,7 @@
     "@semantic-release/github": "^8.1.0",
     "@semantic-release/npm": "^9.0.2",
     "@semantic-release/release-notes-generator": "^10.0.3",
-    "@serverless/test": "^11.1.0",
+    "@serverless/test": "^11.1.1",
     "@types/archiver": "^5.3.2",
     "@types/chai": "^4.3.5",
     "@types/chai-as-promised": "^7.1.5",
