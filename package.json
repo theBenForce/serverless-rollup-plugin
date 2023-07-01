@@ -35,7 +35,7 @@
     "@types/dirty-chai": "^2.0.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.5",
-    "@types/serverless": "^3.12.11",
+    "@types/serverless": "^3.12.13",
     "@types/tmp": "^0.2.3",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.59.8",
@@ -57,7 +57,7 @@
     "node-stream-zip": "^1.15.0",
     "rollup": "^3.26.0",
     "semantic-release": "^19.0.5",
-    "serverless": "^3.32.1",
+    "serverless": "^3.33.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.0",
     "typescript": "^5.0.4"
