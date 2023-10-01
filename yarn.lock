@@ -952,10 +952,10 @@
   resolved "https://registry.yarnpkg.com/@types/serverless/-/serverless-3.12.14.tgz#e7e6be36efc6e4b7481d71b21351fa03995935ce"
   integrity sha512-09pOKc8XCW0cbGBBF8Mf2RrG2Ghl5JXUHuSRK8EUulCo5Sat3wXiu4wv9Gmy29hSNFvaVhevSOARgqlVwFc7RA==
 
-"@types/tmp@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@types/tmp/-/tmp-0.2.3.tgz#908bfb113419fd6a42273674c00994d40902c165"
-  integrity sha512-dDZH/tXzwjutnuk4UacGgFRwV+JSLaXL1ikvidfJprkb7L9Nx1njcRHHmi3Dsvt7pgqqTEeucQuOrWHPFgzVHA==
+"@types/tmp@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@types/tmp/-/tmp-0.2.4.tgz#1e26f791b94a95474f1f3322a721dfb065b876fb"
+  integrity sha512-Vq3rwM+2KgiLacq68EjTJD9cuJ/ne5pXntWn8B8Rxj25SLkGAhCgooCZ1lhcIcV5OFveJ+s5Cqpi+XKfFM/xZA==
 
 "@typescript-eslint/eslint-plugin@^6.5.0":
   version "6.5.0"
