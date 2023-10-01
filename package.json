@@ -33,7 +33,7 @@
     "@types/chai": "^4.3.5",
     "@types/chai-as-promised": "^7.1.5",
     "@types/dirty-chai": "^2.0.2",
-    "@types/mocha": "^10.0.1",
+    "@types/mocha": "^10.0.2",
     "@types/node": "^20.5.7",
     "@types/serverless": "^3.12.14",
     "@types/tmp": "^0.2.3",
