@@ -27,13 +27,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Run linter
-        run: yarn lint
+        run: npm run lint
 
       - name: Install rollup
-        run: yarn add rollup@${{ matrix.rollup-version }}
+        run: npm install rollup@${{ matrix.rollup-version }}
 
       - name: Run Tests
-        run: yarn test
+        run: npm test

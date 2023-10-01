@@ -69,7 +69,7 @@
   "scripts": {
     "lint": "eslint --cache .",
     "build": "tsc -p tsconfig.dist.json",
-    "prepare": "yarn build",
+    "prepare": "npm run build",
     "test": "mocha"
   },
   "dependencies": {
