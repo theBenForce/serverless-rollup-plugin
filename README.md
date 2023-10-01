@@ -14,7 +14,7 @@
 npm install --save-dev serverless-rollup-plugin
 ```
 
-Requires Node.js 14.17 and serverless 3.2.
+Requires Node.js 18 and serverless 3.2.
 
 ## Usage
 
