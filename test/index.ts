@@ -46,7 +46,7 @@ describe('general', () => {
 }`,
       statusCode: 200,
     });
-  });
+  }).timeout(10_000); // the first call to `runServerless` is very expensive for some reason?;
 
   it('should package function as esm', async () => {
     const cwd = new URL('fixtures/serverless-basic-esm', import.meta.url).pathname;
