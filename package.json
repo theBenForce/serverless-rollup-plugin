@@ -39,7 +39,7 @@
     "@types/tmp": "^0.2.6",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
-    "chai": "^4.3.10",
+    "chai": "^4.4.1",
     "chai-as-promised": "^7.1.1",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
