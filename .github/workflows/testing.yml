@@ -12,6 +12,7 @@ jobs:
         node-version:
           - 18.x
           - 20.x
+          - 22.x
         rollup-version:
           - ^2.0.0
           - ^3.0.0
