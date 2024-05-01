@@ -1,5 +1,10 @@
 {
-  "extends": ["airbnb-base", "plugin:unicorn/recommended", "plugin:n/recommended", "plugin:eslint-comments/recommended"],
+  "extends": [
+    "airbnb-base",
+    "plugin:unicorn/recommended",
+    "plugin:n/recommended",
+    "plugin:eslint-comments/recommended"
+  ],
   "plugins": ["unicorn", "n", "eslint-comments"],
   "env": {
     "node": true
@@ -13,6 +18,8 @@
     "unicorn/no-array-for-each": 0,
     "unicorn/no-array-reduce": 0,
     "unicorn/no-null": 0,
+    "unicorn/import-style": 0,
+    "unicorn/no-anonymous-default-export": 0,
     "unicorn/filename-case": ["error", { "case": "camelCase" }],
     "eslint-comments/no-unused-disable": "error",
     "import/extensions": 0
