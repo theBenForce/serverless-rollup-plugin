@@ -3,8 +3,8 @@ import { createRequire } from 'node:module';
 import { expect } from 'chai';
 import StreamZip from 'node-stream-zip';
 import { importFromStringSync, requireFromString } from 'module-from-string';
-import logEmitter from 'log/lib/emitter.js';
-import runServerless from '@serverless/test/run-serverless.js';
+import logEmitter from 'log/lib/emitter.js'; // eslint-disable-line n/no-missing-import
+import runServerless from '@serverless/test/run-serverless.js'; // eslint-disable-line n/no-missing-import
 
 const require = createRequire(import.meta.url);
 const serverlessRoot = join(require.resolve('serverless'), '..', '..');
