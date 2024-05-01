@@ -109,10 +109,10 @@ describe('general', () => {
     expect(logsBuffer.filter((message) => message.startsWith('multiple-functions-per-file-dev-world: Outputting bundle '))).to.have.lengthOf(1);
 
     const [hello, world] = await Promise.all([
-      await new StreamZip.async({ // eslint-disable-line new-cap
+      new StreamZip.async({ // eslint-disable-line new-cap
         file: join(cwd, '.serverless', 'multiple-functions-per-file-dev-hello.zip'),
       }).entryData('index.js'),
-      await new StreamZip.async({ // eslint-disable-line new-cap
+      new StreamZip.async({ // eslint-disable-line new-cap
         file: join(cwd, '.serverless', 'multiple-functions-per-file-dev-world.zip'),
       }).entryData('index.js'),
     ]);
@@ -145,10 +145,10 @@ describe('general', () => {
     expect(logsBuffer.filter((message) => message.startsWith('multiple-files-dev-world: Outputting bundle '))).to.have.lengthOf(1);
 
     const [hello, world] = await Promise.all([
-      await new StreamZip.async({ // eslint-disable-line new-cap
+      new StreamZip.async({ // eslint-disable-line new-cap
         file: join(cwd, '.serverless', 'multiple-files-dev-hello.zip'),
       }).entryData('index.js'),
-      await new StreamZip.async({ // eslint-disable-line new-cap
+      new StreamZip.async({ // eslint-disable-line new-cap
         file: join(cwd, '.serverless', 'multiple-files-dev-world.zip'),
       }).entryData('index.js'),
     ]);
