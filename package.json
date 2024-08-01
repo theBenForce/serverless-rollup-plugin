@@ -57,7 +57,7 @@
     "node-stream-zip": "^1.15.0",
     "rollup": "^4.19.2",
     "semantic-release": "^24.0.0",
-    "serverless": "^3.38.0",
+    "serverless": "^4.1.18",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.3",
     "typescript": "^5.5.4"
