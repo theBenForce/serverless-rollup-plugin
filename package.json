@@ -18,9 +18,9 @@
     "name": "Ben Force",
     "email": "bforce@teamdrg.com"
   },
-  "homepage": "https://github.com/drg-adaptive/serverless-rollup-plugin",
-  "repository": "github:drg-adaptive/serverless-rollup-plugin",
-  "bugs": "https://github.com/drg-adaptive/serverless-rollup-plugin/issues",
+  "homepage": "https://github.com/theBenForce/serverless-rollup-plugin",
+  "repository": "github:theBenForce/serverless-rollup-plugin",
+  "bugs": "https://github.com/theBenForce/serverless-rollup-plugin/issues",
   "license": "MIT",
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
