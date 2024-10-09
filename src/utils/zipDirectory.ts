@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import fs from 'node:fs';
 import archiver from 'archiver';
 import glob from 'fast-glob';
-import Serverless from 'serverless';
+import type Serverless from 'serverless';
 import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 
 export default async (

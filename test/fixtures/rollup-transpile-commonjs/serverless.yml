@@ -1,6 +1,6 @@
 service: serverless-basic
 
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 plugins:
   - ../../../dist

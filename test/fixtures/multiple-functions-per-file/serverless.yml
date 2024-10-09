@@ -1,6 +1,6 @@
 service: multiple-functions-per-file
 
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 plugins:
   - serverless-rollup-plugin # self-import

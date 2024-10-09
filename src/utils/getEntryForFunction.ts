@@ -1,7 +1,8 @@
 import path from 'node:path';
 import tmp from 'tmp';
 import glob from 'fast-glob';
-import Serverless, { FunctionDefinitionHandler } from 'serverless';
+import type Serverless from 'serverless';
+import type { FunctionDefinitionHandler } from 'serverless';
 import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 import { CopyFilesEntry } from './copyFiles.js'; // eslint-disable-line import/no-cycle
 

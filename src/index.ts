@@ -1,8 +1,10 @@
 import path from 'node:path';
 import map from 'p-map';
 import { RollupOptions, OutputChunk, OutputAsset } from 'rollup';
-import Serverless, { FunctionDefinitionHandler } from 'serverless';
-import Plugin, { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
+import type Serverless from 'serverless';
+import type { FunctionDefinitionHandler } from 'serverless';
+import type Plugin from 'serverless/classes/Plugin.js';
+import type { Logging } from 'serverless/classes/Plugin.js';
 import loadRollupConfig from './utils/loadRollupConfig.js';
 import zipDirectory from './utils/zipDirectory.js';
 import getEntryForFunction, { FunctionEntry } from './utils/getEntryForFunction.js';
