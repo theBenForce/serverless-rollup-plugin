@@ -1,11 +1,9 @@
 import { join } from 'node:path';
-import { env } from 'node:process';
 import { expect } from 'chai';
 import StreamZip from 'node-stream-zip';
 import { execa } from 'execa';
 import { importFromStringSync, requireFromString } from 'module-from-string';
 
-env.SLS_LOG_LEVEL = 'info';
 const runServerless = (cwd: string) => execa({ preferLocal: true, cwd, lines: true })`sls package --verbose`;
 
 describe('general', () => {
