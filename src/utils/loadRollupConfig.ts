@@ -1,5 +1,5 @@
 import path from 'node:path';
-import Serverless from 'serverless';
+import type Serverless from 'serverless';
 import { rollup, RollupOptions } from 'rollup';
 import { Logging } from 'serverless/classes/Plugin.js'; // eslint-disable-line n/no-missing-import
 

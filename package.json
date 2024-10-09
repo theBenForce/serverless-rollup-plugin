@@ -50,7 +50,7 @@
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-mocha": "^10.5.0",
-    "eslint-plugin-n": "^17.10.3",
+    "eslint-plugin-n": "^17.11.1",
     "eslint-plugin-unicorn": "^55.0.0",
     "log": "^6.3.2",
     "mocha": "^10.7.3",
@@ -64,7 +64,7 @@
   },
   "peerDependencies": {
     "rollup": "^2.26.0 || ^3.0.0 || ^4.0.0",
-    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0"
+    "serverless": "^1.42.2 || ^2.0.0 || ^3.0.0 || ^4.0.0"
   },
   "scripts": {
     "lint": "eslint --cache .",
