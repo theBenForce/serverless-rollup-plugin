@@ -1,9 +1,10 @@
 service: multiple-files
 
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 plugins:
   - serverless-rollup-plugin # self-import
+  - serverless-localstack
 
 custom:
   rollup:
@@ -11,7 +12,8 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: ${env:LAMBDA_NODE_VERSION}
+  deploymentBucket: deployment-bucket
 
 functions:
   hello:
