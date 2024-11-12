@@ -55,7 +55,7 @@
     "log": "^6.3.2",
     "mocha": "^10.7.3",
     "node-stream-zip": "^1.15.0",
-    "rollup": "^4.23.0",
+    "rollup": "^4.25.0",
     "semantic-release": "^24.2.0",
     "serverless": "^3.38.0",
     "ts-node": "^10.9.2",
