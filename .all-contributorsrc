@@ -25,11 +25,30 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "vinicius73",
+      "name": "Vinicius Reis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1561347?v=4",
+      "profile": "https://vinicius73.dev/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "eshikerya",
+      "name": "Jacky Shikerya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/956884?v=4",
+      "profile": "https://github.com/eshikerya",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
   "contributorsPerLine": 7,
   "repoHost": "https://github.com",
   "commitConvention": "angular",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }
