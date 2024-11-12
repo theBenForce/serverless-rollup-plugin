@@ -3,7 +3,7 @@ service: multiple-functions-per-file
 frameworkVersion: '4'
 
 plugins:
-  - ../../../dist # self-import
+  - serverless-rollup-plugin # self-import
   - serverless-localstack
 
 custom:
