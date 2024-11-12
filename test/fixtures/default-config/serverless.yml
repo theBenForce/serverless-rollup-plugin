@@ -3,7 +3,7 @@ service: default-config
 frameworkVersion: '4'
 
 plugins:
-  - serverless-rollup-plugin # self-import
+  - ../../../dist # self-import
   - serverless-localstack
 
 custom:
