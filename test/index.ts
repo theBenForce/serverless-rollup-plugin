@@ -2,14 +2,20 @@ import { join } from 'node:path';
 import { expect } from 'chai';
 import StreamZip from 'node-stream-zip';
 import { execa } from 'execa';
+import * as fs from 'fs';
 import { importFromStringSync, requireFromString } from 'module-from-string';
 
-const runServerless = (cwd: string) => execa({ preferLocal: true, cwd, lines: true })`sls package --verbose --stage testing`;
+const runServerless = (cwd: string) => execa({ preferLocal: true, cwd, lines: true })`sls package --verbose`;
 
 describe('general', () => {
   it('should package function as cjs', async () => {
     const cwd = new URL('fixtures/serverless-basic', import.meta.url).pathname;
     await runServerless(cwd);
+
+    const files = await fs.promises.readdir(join(cwd, '.serverless'));
+
+    console.info(JSON.stringify(files, null, 2));
+    expect(files.length > 0, 'No packaged files found!');
 
     const zip = new StreamZip.async({ // eslint-disable-line new-cap
       file: join(cwd, '.serverless', 'serverless-basic-dev-hello.zip'),

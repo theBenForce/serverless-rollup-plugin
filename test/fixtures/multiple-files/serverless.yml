@@ -7,9 +7,6 @@ plugins:
   - serverless-localstack
 
 custom:
-  localstack:
-    stages:
-      - testing
   rollup:
     config: ./rollup.config.js
 

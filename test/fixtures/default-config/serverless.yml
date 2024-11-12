@@ -6,11 +6,6 @@ plugins:
   - ../../../dist # self-import
   - serverless-localstack
 
-custom:
-  localstack:
-    stages:
-      - testing
-
 provider:
   name: aws
   runtime: nodejs20.x
