@@ -146,6 +146,7 @@ parameter is an array of glob pattern strings, or objects with the following pro
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
+
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!
