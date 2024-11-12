@@ -140,6 +140,15 @@ parameter is an array of glob pattern strings, or objects with the following pro
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/perrin4869"><img src="https://avatars.githubusercontent.com/u/5774716?v=4?s=100" width="100px;" alt="Julian Grinblat"/><br /><sub><b>Julian Grinblat</b></sub></a><br /><a href="https://github.com/theBenForce/serverless-rollup-plugin/commits?author=perrin4869" title="Code">💻</a> <a href="#maintenance-perrin4869" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://theBenForce.com"><img src="https://avatars.githubusercontent.com/u/1892467?v=4?s=100" width="100px;" alt="Ben Force"/><br /><sub><b>Ben Force</b></sub></a><br /><a href="https://github.com/theBenForce/serverless-rollup-plugin/commits?author=theBenForce" title="Code">💻</a> <a href="https://github.com/theBenForce/serverless-rollup-plugin/commits?author=theBenForce" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://vinicius73.dev/"><img src="https://avatars.githubusercontent.com/u/1561347?v=4?s=100" width="100px;" alt="Vinicius Reis"/><br /><sub><b>Vinicius Reis</b></sub></a><br /><a href="https://github.com/theBenForce/serverless-rollup-plugin/commits?author=vinicius73" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
