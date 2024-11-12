@@ -1,6 +1,7 @@
 # Welcome to serverless-rollup-plugin 👋
 
-[![Release](https://github.com/theBenForce/serverless-rollup-plugin/workflows/Release/badge.svg)](https://github.com/theBenForce/serverless-rollup-plugin/actions)
+[![Release](https://github.com/theBenForce/serverless-rollup-plugin/actions/workflows/release.yml/badge.svg)](https://github.com/theBenForce/serverless-rollup-plugin/actions/workflows/release.yml)
+[![Testing](https://github.com/theBenForce/serverless-rollup-plugin/actions/workflows/testing.yml/badge.svg)](https://github.com/theBenForce/serverless-rollup-plugin/actions/workflows/testing.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/79e200bf72d884691c7a/maintainability)](https://codeclimate.com/github/theBenForce/serverless-rollup-plugin/maintainability)
 [![npm version](https://badge.fury.io/js/serverless-rollup-plugin.svg)](https://badge.fury.io/js/serverless-rollup-plugin)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FtheBenForce%2Fserverless-rollup-plugin.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FtheBenForce%2Fserverless-rollup-plugin?ref=badge_shield)
