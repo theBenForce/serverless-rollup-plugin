@@ -12,7 +12,8 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: ${env:LAMBDA_NODE_VERSION}
+  deploymentBucket: deployment-bucket
 
 functions:
   hello:
