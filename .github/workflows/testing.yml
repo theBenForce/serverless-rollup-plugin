@@ -39,8 +39,13 @@ jobs:
       - name: Start LocalStack
         uses: LocalStack/setup-localstack@v0.2.2
         with:
-          image-tag: 'latest'
+          image-tag: '3.3' # Per https://docs.localstack.cloud/user-guide/integrations/serverless-framework/
           install-awslocal: 'true'
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
 
       - name: Run Tests
         run: npm test
