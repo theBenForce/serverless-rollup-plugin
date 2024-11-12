@@ -34,6 +34,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "eshikerya",
+      "name": "Jacky Shikerya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/956884?v=4",
+      "profile": "https://github.com/eshikerya",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",
