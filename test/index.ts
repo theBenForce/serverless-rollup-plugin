@@ -4,7 +4,7 @@ import StreamZip from 'node-stream-zip';
 import { execa } from 'execa';
 import { importFromStringSync, requireFromString } from 'module-from-string';
 
-const runServerless = (cwd: string) => execa({ preferLocal: true, cwd, lines: true })`sls package --verbose`;
+const runServerless = (cwd: string) => execa({ preferLocal: true, cwd, lines: true })`sls package --verbose --stage testing`;
 
 describe('general', () => {
   it('should package function as cjs', async () => {

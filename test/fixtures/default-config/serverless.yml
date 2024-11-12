@@ -4,10 +4,16 @@ frameworkVersion: '4'
 
 plugins:
   - serverless-rollup-plugin # self-import
+  - serverless-localstack
+
+custom:
+  localstack:
+    stages:
+      - testing
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs20.x
 
 functions:
   hello:
