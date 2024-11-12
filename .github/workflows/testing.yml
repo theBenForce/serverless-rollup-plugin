@@ -36,11 +36,11 @@ jobs:
       - name: Install rollup
         run: npm install rollup@${{ matrix.rollup-version }}
 
-      # - name: Start LocalStack
-      #   uses: LocalStack/setup-localstack@v0.2.2
-      #   with:
-      #     image-tag: 'latest'
-      #     install-awslocal: 'true'
+      - name: Start LocalStack
+        uses: LocalStack/setup-localstack@v0.2.2
+        with:
+          image-tag: 'latest'
+          install-awslocal: 'true'
 
       - name: Run Tests
         run: npm test
