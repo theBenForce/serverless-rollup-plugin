@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/dependabot-2.0.json": "file:///workspaces/serverless-rollup-plugin/dependabot.yml"
+    }
+}
