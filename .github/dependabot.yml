@@ -15,3 +15,5 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every weekday
       interval: daily
+    ignore:
+      - dependency-name: LocalStack/setup-localstack
