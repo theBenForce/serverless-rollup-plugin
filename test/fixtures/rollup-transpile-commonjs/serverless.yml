@@ -2,6 +2,8 @@ service: serverless-basic
 
 frameworkVersion: '4'
 
+licenseKey: ${env:SERVERLESS_LICENSE_KEY}
+
 plugins:
   - ../../../dist
   - serverless-localstack

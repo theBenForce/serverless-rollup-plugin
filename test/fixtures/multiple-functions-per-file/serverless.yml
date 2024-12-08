@@ -2,6 +2,8 @@ service: multiple-functions-per-file
 
 frameworkVersion: '4'
 
+licenseKey: ${env:SERVERLESS_LICENSE_KEY}
+
 plugins:
   - serverless-rollup-plugin # self-import
   - serverless-localstack
