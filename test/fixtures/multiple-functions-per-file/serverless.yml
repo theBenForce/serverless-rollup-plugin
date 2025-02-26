@@ -11,6 +11,11 @@ plugins:
 custom:
   rollup:
     config: ./rollup.config.js
+  localstack:
+    host: http://localhost
+    edgePort: 4566
+    autostart: false
+    debug: true
 
 provider:
   name: aws
