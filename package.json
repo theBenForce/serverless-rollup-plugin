@@ -23,7 +23,7 @@
   "bugs": "https://github.com/theBenForce/serverless-rollup-plugin/issues",
   "license": "MIT",
   "devDependencies": {
-    "@eslint-community/eslint-plugin-eslint-comments": "^4.4.1",
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.19.0",
     "@semantic-release/changelog": "^6.0.3",
